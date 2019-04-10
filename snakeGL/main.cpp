@@ -126,13 +126,24 @@ bool loadShaders(GLuint &program) {
 	return loadSuccess;
 }
 
+void updateInput(GLFWwindow* window, glm::vec3& position, glm::vec3& rotation, glm::vec3& scale) {
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) position.z -= 0.001f;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) position.z += 0.001f;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) position.x -= 0.001f;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) position.x += 0.001f;
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) rotation.y -= 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) rotation.y += 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) scale += 0.001f;
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) scale -= 0.001f;
+}
+
 int main() {
 	//INIT GLFW
 	glfwInit();
 	
 	//CREATE WINDOW
 	const int WINDOW_WIDTH = 640;
-	const int WINDOW_HEIGHT = 640;
+	const int WINDOW_HEIGHT = 480;
 	int framebufferWidth = 0;
 	int framebufferHeight = 0;
 	
@@ -163,9 +174,9 @@ int main() {
 	//OPENGL OPTIONS
 	glEnable(GL_DEPTH_TEST);
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	//glEnable(GL_CULL_FACE);			//
+	//glCullFace(GL_BACK);				// Uncomment those to render only front faces of triangles
+	//glFrontFace(GL_CCW);				//
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -262,12 +273,16 @@ int main() {
 	SOIL_free_image_data(image1);
 
 	//INIT MVP MATRICES
+	glm::vec3 position(0.f);
+	glm::vec3 rotation(0.f);
+	glm::vec3 scale(1.f);
+
 	glm::mat4 ModelMatrix(1.f);
-	ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.f, 0.f, 0.f));					//moveXYZ
-	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(1.f, 0.f, 0.f));	//rotateX
-	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 1.f, 0.f));	//rotateY
-	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 0.f, 1.f));	//rotateZ
-	ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.f));									//scaleXYZ
+	ModelMatrix = glm::translate(ModelMatrix, position);					//moveXYZ
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.x), glm::vec3(1.f, 0.f, 0.f));	//rotateX
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.y), glm::vec3(0.f, 1.f, 0.f));	//rotateY
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.z), glm::vec3(0.f, 0.f, 1.f));	//rotateZ
+	ModelMatrix = glm::scale(ModelMatrix, scale);									//scaleXYZ
 
 	glm::vec3 camPosition(0.f, 0.f, 1.f);
 	glm::vec3 worldUp(0.f, 1.f, 0.f);
@@ -292,7 +307,7 @@ int main() {
 	while (!glfwWindowShouldClose(win)) {
 		//INTERACTING WITH WINDOW
 		glfwPollEvents();
-
+		updateInput(win, position, rotation, scale);
 		//UPDATE GAME INPUT ----------------------------------------------------------------------------------------------------
 		updateInput(win);
 		//UPDATE GAME ----------------------------------------------------------------------------------------------------------
@@ -310,8 +325,15 @@ int main() {
 		glUniform1i(glGetUniformLocation(core_program, "texture1"), 1);
 
 		//Move, rotate and scale
-		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.05f), glm::vec3(0.f, 0.f, 1.f));	//like this
-		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.03f), glm::vec3(1.f, 0.f, 0.f));	//and this
+		//rotation.y += 0.05f; //this way
+		//rotation.z += 0.1f;
+
+		glm::mat4 ModelMatrix(1.f);
+		ModelMatrix = glm::translate(ModelMatrix, position);										
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.x), glm::vec3(1.f, 0.f, 0.f));	
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.y), glm::vec3(0.f, 1.f, 0.f));	
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.z), glm::vec3(0.f, 0.f, 1.f));	
+		ModelMatrix = glm::scale(ModelMatrix, scale);												
 		glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
 
 		//Update camera in case of resizing
