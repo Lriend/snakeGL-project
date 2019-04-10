@@ -135,6 +135,7 @@
     <ClCompile Include="shader\shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="libraries.h" />
     <ClInclude Include="shader\shader.hpp" />
   </ItemGroup>
   <ItemGroup>
