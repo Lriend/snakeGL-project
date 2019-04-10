@@ -26,9 +26,9 @@ Vertex vertices[] =
 {
 //Position								//Color							//Texcoords					//Normals
 	glm::vec3(-0.5f, 0.5f, 0.f),			glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 1.f),		//glm::vec3(0.f, 0.f, 1.f),
-	glm::vec3(-0.5f, -0.5f, 0.f),			glm::vec3(0.f, 0.f, 1.f),		glm::vec2(0.f, 0.f),		//glm::vec3(0.f, 0.f, 1.f),
-	glm::vec3(0.5f, -0.5f, 0.f),			glm::vec3(1.f, 1.f, 0.f),		glm::vec2(1.f, 0.f),		//glm::vec3(0.f, 0.f, 1.f),
-	glm::vec3(0.5f, 0.5f, 0.f),				glm::vec3(0.f, 1.f, 0.f),		glm::vec2(0.f, 0.f)//,		glm::vec3(0.f, 0.f, 1.f),
+	glm::vec3(-0.5f, -0.5f, 0.f),			glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		//glm::vec3(0.f, 0.f, 1.f),
+	glm::vec3(0.5f, -0.5f, 0.f),			glm::vec3(1.f, 0.f, 0.f),		glm::vec2(1.f, 0.f),		//glm::vec3(0.f, 0.f, 1.f),
+	glm::vec3(0.5f, 0.5f, 0.f),				glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f)//,		glm::vec3(0.f, 0.f, 1.f),
 };
 unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
 
@@ -132,21 +132,22 @@ int main() {
 	
 	//CREATE WINDOW
 	const int WINDOW_WIDTH = 640;
-	const int WINDOW_HEIGHT = 480;
+	const int WINDOW_HEIGHT = 640;
 	int framebufferWidth = 0;
 	int framebufferHeight = 0;
 	
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // For Mac (redundand)
 
 	GLFWwindow* win = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Lorem Ipsum Title", NULL, NULL);
-	//glfwSetFramebufferSizeCallback(win, framebufferResizeCallback); // For resizable window
-	glfwGetFramebufferSize(win, &framebufferWidth, &framebufferHeight);	//<----------------+----	//For non-resizable window
-	glViewport(0, 0, framebufferWidth, framebufferHeight); //Canvas	  	  <----------------+
+
+	glfwGetFramebufferSize(win, &framebufferWidth, &framebufferHeight);			//<----------------+----	//For non-resizable window
+	glfwSetFramebufferSizeCallback(win, framebufferResizeCallback);		//<---For resizable window |
+	//glViewport(0, 0, framebufferWidth, framebufferHeight); //Canvas	  		  <----------------+
 
 	glfwMakeContextCurrent(win); //Important for GLEW
 
@@ -169,7 +170,7 @@ int main() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //Could be GL_LINE as well as GL_FILL (then will draw only outlines)
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL ); //Could be GL_LINE as well as GL_FILL (then will draw only outlines)
 
 	//SHADER INIT
 	GLuint core_program;
@@ -211,6 +212,82 @@ int main() {
 	//BIND VAO 0
 	glBindVertexArray(0);
 
+	//TEXTURE INIT
+	//Texture0
+	int imageWidth = 0;
+	int imageHeight = 0;
+	unsigned char* image = SOIL_load_image("Textures/colorfull.png", &imageWidth, &imageHeight, NULL, SOIL_LOAD_RGBA);
+
+	GLuint texture0;
+	glGenTextures(1, &texture0);
+	glBindTexture(GL_TEXTURE_2D, texture0);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	if (image) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else std::cout << "ERROR! MAIN.CPP : TEXTURE_LOADING_FAILED" << std::endl;
+
+	glActiveTexture(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	SOIL_free_image_data(image);
+	
+	//Texture1
+	int imageWidth1 = 0;
+	int imageHeight1 = 0;
+	unsigned char* image1 = SOIL_load_image("Textures/cherry.png", &imageWidth1, &imageHeight1, NULL, SOIL_LOAD_RGBA);
+
+	GLuint texture1;
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	if (image1) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth1, imageHeight1, 0, GL_RGBA, GL_UNSIGNED_BYTE, image1);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else std::cout << "ERROR! MAIN.CPP : TEXTURE_LOADING_FAILED" << std::endl;
+
+	glActiveTexture(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	SOIL_free_image_data(image1);
+
+	//INIT MVP MATRICES
+	glm::mat4 ModelMatrix(1.f);
+	ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.f, 0.f, 0.f));					//moveXYZ
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(1.f, 0.f, 0.f));	//rotateX
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 1.f, 0.f));	//rotateY
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 0.f, 1.f));	//rotateZ
+	ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.f));									//scaleXYZ
+
+	glm::vec3 camPosition(0.f, 0.f, 1.f);
+	glm::vec3 worldUp(0.f, 1.f, 0.f);
+	glm::vec3 camFront(0.f, 0.f, -1.f);
+	glm::mat4 ViewMatrix(1.f);
+	ViewMatrix = glm::lookAt(camPosition, camPosition + camFront, worldUp);
+
+	float fov = 90.f;
+	float nearPlane = 0.1f;
+	float farPlane = 1000.f;
+	glm::mat4 ProjectionMatrix(1.f);
+	ProjectionMatrix = glm::perspective(glm::radians(fov), static_cast<float>(framebufferWidth) / framebufferHeight, nearPlane, farPlane);
+
+	//INIT UNIFORMS
+	glUseProgram(core_program);
+	glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(core_program, "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(ViewMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
+	glUseProgram(0);
+
 	//MAIN LOOP
 	while (!glfwWindowShouldClose(win)) {
 		//INTERACTING WITH WINDOW
@@ -228,6 +305,27 @@ int main() {
 		//Use a program
 		glUseProgram(core_program);
 
+		//Update uniforms
+		glUniform1i(glGetUniformLocation(core_program, "texture0"), 0);
+		glUniform1i(glGetUniformLocation(core_program, "texture1"), 1);
+
+		//Move, rotate and scale
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.05f), glm::vec3(0.f, 0.f, 1.f));	//like this
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.03f), glm::vec3(1.f, 0.f, 0.f));	//and this
+		glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+
+		//Update camera in case of resizing
+		glfwGetFramebufferSize(win, &framebufferWidth, &framebufferHeight);
+		ProjectionMatrix = glm::mat4(1.f);
+		ProjectionMatrix = glm::perspective(glm::radians(fov), static_cast<float>(framebufferWidth) / framebufferHeight, nearPlane, farPlane);
+		glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
+		
+		//Activate texture
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+
 		//Bind vertex array object
 		glBindVertexArray(VAO);
 
@@ -238,6 +336,12 @@ int main() {
 		//End Draw
 		glfwSwapBuffers(win);
 		glFlush();
+
+		glBindVertexArray(0);
+		glUseProgram(0);
+
+		glActiveTexture(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	
 	//END OF PROGRAM
