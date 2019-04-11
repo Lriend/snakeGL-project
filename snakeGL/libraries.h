@@ -17,3 +17,5 @@
 #include "glm/gtc/type_ptr.hpp"
 
 #include <SOIL2.h>
+
+#include "shader.h"
