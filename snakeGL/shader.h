@@ -18,7 +18,7 @@ class Shader {
 	//Member vars
 	GLuint id;
 
-	//Private funs
+	//Private functions
 	std::string loadShaderSource(char*);
 	GLuint loadShader(GLenum, char*);
 	void linkProgram(GLuint, GLuint, GLuint);
@@ -28,7 +28,7 @@ public:
 	Shader(char* vertexFile, char* fragmentFile, char* geometryFile = (char*)"");
 	~Shader();
 
-	//Set uniform funs
+	//Set uniform functions
 	void use();
 	void unUse();
 	void set1i(GLint value, const GLchar* name);

@@ -20,6 +20,7 @@ class Material
 	GLint diffuseTex;
 	GLint specularTex;
 public:
+	//Ctor & dtor
 	Material(
 	glm::vec3 ambient,
 	glm::vec3 diffuse,
@@ -27,6 +28,8 @@ public:
 	GLint diffuseTex,
 	GLint specularTex);
 	~Material();
+
+	//Functions
 	void sendToShader(Shader& program);
 };
 

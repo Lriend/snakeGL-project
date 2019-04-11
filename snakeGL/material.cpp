@@ -1,5 +1,6 @@
 #include "material.h"
 
+//Ctor & dtor
 Material::Material(
 	glm::vec3 ambient,
 	glm::vec3 diffuse,
@@ -16,7 +17,7 @@ Material::Material(
 
 Material::~Material(){}
 
-
+//Functions
 void Material::sendToShader(Shader& program) {
 	program.setVec3f(this->ambient, "material.ambient");
 	program.setVec3f(this->diffuse, "material.diffuse");

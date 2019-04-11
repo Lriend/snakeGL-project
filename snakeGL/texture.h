@@ -16,12 +16,17 @@ class Texture
 	unsigned int type;
 	GLint textureUnit;
 public:
+	//Ctor & dtor
 	Texture(const char* fileName, GLenum type, GLint texture_unit);
 	~Texture();
+
+	//Getters
 	GLuint getID() const;
+	GLint getTextureUnit() const;
+
+	//Functions
 	void bind();
 	void unbind();
-	GLint getTextureUnit() const;
 	void loadFromFile(const char* fileName);
 };
 

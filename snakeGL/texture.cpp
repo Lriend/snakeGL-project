@@ -1,6 +1,6 @@
 #include "texture.h"
 
-
+//Ctor & dtor
 Texture::Texture(const char* fileName, GLenum type, GLint texture_unit)
 {
 	this->type = type;
@@ -31,8 +31,12 @@ Texture::~Texture()
 	glDeleteTextures(1, &this->id);
 }
 
+//Getters
 GLuint Texture::getID() const { return this->id; }
 
+GLint Texture::getTextureUnit() const { return this->textureUnit; }
+
+//Functions
 void Texture::bind() {
 	glActiveTexture(GL_TEXTURE0 + this->textureUnit);
 	glBindTexture(this->type, this->id);
@@ -42,8 +46,6 @@ void Texture::unbind() {
 	glActiveTexture(0);
 	glBindTexture(this->type, 0);
 }
-
-GLint Texture::getTextureUnit() const { return this->textureUnit; }
 
 void Texture::loadFromFile(const char* fileName) {
 	if (this->id) glDeleteTextures(1, &this->id);

@@ -1,6 +1,6 @@
 #include "shader.h"
 
-//Private funs
+//Private functions
 std::string Shader::loadShaderSource(char* fileName) {
 	std::string temp = "";
 	std::string src = "";
@@ -81,7 +81,7 @@ Shader::~Shader() {
 	glDeleteProgram(this->id);
 }
 
-//Set uniform funs
+//Set uniform functions
 void Shader::use() {
 	glUseProgram(this->id);
 }
