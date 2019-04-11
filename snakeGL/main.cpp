@@ -139,6 +139,9 @@ int main() {
 	//Texture1
 	Texture texture1("Textures/cherry.png", GL_TEXTURE_2D, 1);
 
+	//Material0			Ambient color	Diffuse	color	Specular color	texture					   specular texture
+	Material material0(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), texture0.getTextureUnit(), texture1.getTextureUnit());
+
 	//INIT MVP MATRICES
 	glm::vec3 position(0.f);
 	glm::vec3 rotation(0.f);
@@ -192,6 +195,8 @@ int main() {
 		//Update uniforms
 		core_program.set1i(texture0.getTextureUnit(), "texture0");
 		core_program.set1i(texture1.getTextureUnit(), "texture1");
+
+		material0.sendToShader(core_program);
 
 		//Move, rotate and scale
 		//rotation.y += 0.05f; //this way
