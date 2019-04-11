@@ -3,16 +3,17 @@
 struct Vertex {
 	glm::vec3 position;
 	glm::vec3 color;
-	glm::vec2 texcoords;
+	glm::vec2 texcoord;
+	glm::vec3 normal;
 };
 
 Vertex vertices[] =
 {
-//Position								//Color							//Texcoords					//Normals
-	glm::vec3(-0.5f, 0.5f, 0.f),			glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 1.f),		//glm::vec3(0.f, 0.f, 1.f),
-	glm::vec3(-0.5f, -0.5f, 0.f),			glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		//glm::vec3(0.f, 0.f, 1.f),
-	glm::vec3(0.5f, -0.5f, 0.f),			glm::vec3(1.f, 0.f, 0.f),		glm::vec2(1.f, 0.f),		//glm::vec3(0.f, 0.f, 1.f),
-	glm::vec3(0.5f, 0.5f, 0.f),				glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f)//,		glm::vec3(0.f, 0.f, 1.f),
+	//Positions								//Colors						//texcoords					//Normals
+	glm::vec3(-0.5f, 0.5f, 0.f),			glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, -1.f),
+	glm::vec3(-0.5f, -0.5f, 0.f),			glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, -1.f),
+	glm::vec3(0.5f, -0.5f, 0.f),			glm::vec3(1.f, 0.f, 0.f),		glm::vec2(1.f, 0.f),		glm::vec3(0.f, 0.f, -1.f),
+	glm::vec3(0.5f, 0.5f, 0.f),				glm::vec3(1.f, 0.f, 0.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, -1.f)
 };
 unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
 
@@ -201,8 +202,12 @@ int main() {
 	glEnableVertexAttribArray(1);//	<--------------------------------------------------------------------------------------------------------there--------------+
 	//																																							|
 	//Texcoord																																and twos			|
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoords));//	<----------------------------there--------------+
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));//	<----------------------------there--------------+
 	glEnableVertexAttribArray(2);//	<--------------------------------------------------------------------------------------------------------there--------------+
+	//																																							|
+	//Normal																																and twos			|
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));//		<----------------------------there--------------+
+	glEnableVertexAttribArray(3);//	<--------------------------------------------------------------------------------------------------------there--------------+
 
 	//BIND VAO 0
 	glBindVertexArray(0);
@@ -280,20 +285,28 @@ int main() {
 	glm::mat4 ProjectionMatrix(1.f);
 	ProjectionMatrix = glm::perspective(glm::radians(fov), static_cast<float>(framebufferWidth) / framebufferHeight, nearPlane, farPlane);
 
+	//LIGHTS
+	glm::vec3 lightPos0(0.f, 0.f, 1.f);
+
 	//INIT UNIFORMS
 	glUseProgram(core_program);
 	glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(core_program, "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(ViewMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
+	
+	glUniform3fv(glGetUniformLocation(core_program, "lightPos0"), 1, glm::value_ptr(lightPos0));
+	glUniform3fv(glGetUniformLocation(core_program, "cameraPos"), 1, glm::value_ptr(camPosition));
+	
 	glUseProgram(0);
 
 	//MAIN LOOP
 	while (!glfwWindowShouldClose(win)) {
 		//INTERACTING WITH WINDOW
 		glfwPollEvents();
-		updateInput(win, position, rotation, scale);
+		updateInput(win, position, rotation, scale); //Model control
+		updateInput(win); //Window control
 		//UPDATE GAME INPUT ----------------------------------------------------------------------------------------------------
-		updateInput(win);
+
 		//UPDATE GAME ----------------------------------------------------------------------------------------------------------
 		
 		//DRAW------------------------------------------------------------------------------------------------------------------
