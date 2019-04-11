@@ -10,6 +10,7 @@
 
 class Texture
 {
+	//Member vars
 	GLuint id;
 	int width;
 	int height;
