@@ -39,7 +39,8 @@ void main()
 
 
 	//Final light
-	fs_color = texture(texture0, vs_texcoord) * vec4(vs_color, 1.f) 
-	* (vec4(ambientLight, 1.f) + vec4(diffuseFinal, 1.f) + vec4(specularFinal, 1.f)); 
+	fs_color = texture(texture0, vs_texcoord) * 
+	vec4(vs_color, 0.5f) * 
+	(vec4(ambientLight, 1.f) + vec4(diffuseFinal, 1.f) + vec4(specularFinal, 1.f)); 
 	//Every image processing could be done [Multiply/Divide/Add/Substract/Negative/etc...]
 }

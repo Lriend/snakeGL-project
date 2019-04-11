@@ -19,3 +19,4 @@
 #include <SOIL2.h>
 
 #include "shader.h"
+#include "texture.h"

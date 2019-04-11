@@ -133,10 +133,12 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="shader.cpp" />
+    <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libraries.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FragmentShader.glsl" />

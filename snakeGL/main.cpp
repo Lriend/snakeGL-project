@@ -80,9 +80,9 @@ int main() {
 	//OPENGL OPTIONS
 	glEnable(GL_DEPTH_TEST);
 
-	//glEnable(GL_CULL_FACE);			//
-	//glCullFace(GL_BACK);				// Uncomment those to render only front faces of triangles
-	//glFrontFace(GL_CCW);				//
+	glEnable(GL_CULL_FACE);			//
+	glCullFace(GL_BACK);				// Uncomment those to render only front faces of triangles
+	glFrontFace(GL_CCW);				//
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -134,52 +134,10 @@ int main() {
 
 	//TEXTURE INIT
 	//Texture0
-	int imageWidth = 0;
-	int imageHeight = 0;
-	unsigned char* image = SOIL_load_image("Textures/colorfull.png", &imageWidth, &imageHeight, NULL, SOIL_LOAD_RGBA);
-
-	GLuint texture0;
-	glGenTextures(1, &texture0);
-	glBindTexture(GL_TEXTURE_2D, texture0);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	if (image) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else std::cout << "ERROR! MAIN.CPP : TEXTURE_LOADING_FAILED" << std::endl;
-
-	glActiveTexture(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	SOIL_free_image_data(image);
+	Texture texture0("Textures/colorfull.png", GL_TEXTURE_2D, 0);
 	
 	//Texture1
-	int imageWidth1 = 0;
-	int imageHeight1 = 0;
-	unsigned char* image1 = SOIL_load_image("Textures/cherry.png", &imageWidth1, &imageHeight1, NULL, SOIL_LOAD_RGBA);
-
-	GLuint texture1;
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	if (image1) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth1, imageHeight1, 0, GL_RGBA, GL_UNSIGNED_BYTE, image1);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else std::cout << "ERROR! MAIN.CPP : TEXTURE_LOADING_FAILED" << std::endl;
-
-	glActiveTexture(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	SOIL_free_image_data(image1);
+	Texture texture1("Textures/cherry.png", GL_TEXTURE_2D, 1);
 
 	//INIT MVP MATRICES
 	glm::vec3 position(0.f);
@@ -232,8 +190,8 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		
 		//Update uniforms
-		core_program.set1i(0, "texture0");
-		core_program.set1i(1, "texture1");
+		core_program.set1i(texture0.getTextureUnit(), "texture0");
+		core_program.set1i(texture1.getTextureUnit(), "texture1");
 
 		//Move, rotate and scale
 		//rotation.y += 0.05f; //this way
@@ -257,10 +215,8 @@ int main() {
 		core_program.use();
 
 		//Activate texture
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture1);
+		texture0.bind();
+		texture1.bind();
 
 		//Bind vertex array object
 		glBindVertexArray(VAO);
@@ -283,7 +239,6 @@ int main() {
 	//END OF PROGRAM
 	glfwDestroyWindow(win);
 	glfwTerminate();
-
 
 	return 0;
 }

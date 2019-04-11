@@ -13,7 +13,7 @@ std::string Shader::loadShaderSource(char* fileName) {
 	if (in_file.is_open())
 		while (std::getline(in_file, temp))
 			src += temp + "\n";
-	else std::cout << "ERROR! SHADER : CANNOT_OPEN_FILE: "<< fileName << std::endl;
+	else std::cout << "ERROR! SHADER.CPP/LOADSHADERSOURCE : CANNOT_OPEN_FILE: "<< fileName << std::endl;
 
 	in_file.close();
 
@@ -33,7 +33,7 @@ GLuint Shader::loadShader(GLenum type, char* fileName) {
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-		std::cout << "ERROR! SHADER : CANNOT_COMPILE_SHADER: "<< fileName << std::endl << infoLog << std::endl;
+		std::cout << "ERROR! SHADER.CPP/LOADSHADER : CANNOT_COMPILE_SHADER: "<< fileName << std::endl << infoLog << std::endl;
 	}
 
 	return shader;
@@ -52,7 +52,7 @@ void Shader::linkProgram(GLuint vertexShader, GLuint geometryShader, GLuint frag
 	glGetProgramiv(this->id, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(this->id, 512, NULL, infoLog);
-		std::cout << "ERROR! SHADER : CANNOT_LINK_PROGRAM" << std::endl << infoLog << std::endl;
+		std::cout << "ERROR! SHADER.CPP/LINKPROGRAM : CANNOT_LINK_PROGRAM" << std::endl << infoLog << std::endl;
 	}
 
 	glUseProgram(0);
