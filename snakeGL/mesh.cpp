@@ -152,8 +152,6 @@ void Mesh::scaleUp(const glm::vec3 scale) {
 	this->scale += scale;
 }
 
-void Mesh::update(){}
-
 void Mesh::render(Shader* shader){
 	//Update uniforms
 	this->updateModelMatrix();

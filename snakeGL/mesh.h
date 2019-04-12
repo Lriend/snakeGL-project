@@ -42,7 +42,6 @@ public:
 	void move(const glm::vec3 position);
 	void rotate(const glm::vec3 rotation);
 	void scaleUp(const glm::vec3 scale);
-	void update();
 	void render(Shader* shader);
 };
 

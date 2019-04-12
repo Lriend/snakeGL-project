@@ -1,10 +1,9 @@
 #include "texture.h"
 
 //Ctor & dtor
-Texture::Texture(const char* fileName, GLenum type, GLint texture_unit)
+Texture::Texture(const char* fileName, GLenum type)
 {
 	this->type = type;
-	this->textureUnit = texture_unit;
 	unsigned char* image = SOIL_load_image(fileName, &this->width, &this->height, NULL, SOIL_LOAD_RGBA);
 
 	glGenTextures(1, &this->id);
@@ -34,11 +33,10 @@ Texture::~Texture()
 //Getters
 GLuint Texture::getID() const { return this->id; }
 
-GLint Texture::getTextureUnit() const { return this->textureUnit; }
 
 //Functions
-void Texture::bind() {
-	glActiveTexture(GL_TEXTURE0 + this->textureUnit);
+void Texture::bind(const GLint textureUnit) {
+	glActiveTexture(GL_TEXTURE0 + textureUnit);
 	glBindTexture(this->type, this->id);
 }
 

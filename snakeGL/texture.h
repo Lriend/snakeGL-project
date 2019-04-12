@@ -15,18 +15,16 @@ class Texture
 	int width;
 	int height;
 	unsigned int type;
-	GLint textureUnit;
 public:
 	//Ctor & dtor
-	Texture(const char* fileName, GLenum type, GLint texture_unit);
+	Texture(const char* fileName, GLenum type);
 	~Texture();
 
 	//Getters
 	GLuint getID() const;
-	GLint getTextureUnit() const;
 
 	//Functions
-	void bind();
+	void bind(const GLint textureUnit);
 	void unbind();
 	void loadFromFile(const char* fileName);
 };
