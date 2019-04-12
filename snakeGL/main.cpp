@@ -1,5 +1,7 @@
 #include "libraries.h"
 
+Prefab test;
+
 Vertex vertices[] =
 {
 	//Positions								//Colors						//texcoords					//Normals
@@ -36,31 +38,39 @@ void updateInput(GLFWwindow* window, Mesh &mesh) {
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) mesh.scaleUp(glm::vec3(-0.001f));
 }
 
-int main() {
-	//INIT GLFW
-	glfwInit();
-	
-	//CREATE WINDOW
-	const int WINDOW_WIDTH = 640;
-	const int WINDOW_HEIGHT = 480;
-	int framebufferWidth = 0;
-	int framebufferHeight = 0;
-	
+GLFWwindow* createWindow(const char* title, const int width, const int height, int& fbWidth, int& fbHeight, const int glMajorVer, const int glMinorVer, bool resizable) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glMajorVer);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glMinorVer);
+	glfwWindowHint(GLFW_RESIZABLE, resizable);
 
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // For Mac (redundand)
 
-	GLFWwindow* win = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Lorem Ipsum Title", NULL, NULL);
+	GLFWwindow* win = glfwCreateWindow(width, height, title, NULL, NULL);
 
-	glfwGetFramebufferSize(win, &framebufferWidth, &framebufferHeight);			//<----------------+----	//For non-resizable window
+	glfwGetFramebufferSize(win, &fbWidth, &fbHeight);			//<----------------+----	//For non-resizable window
 	glfwSetFramebufferSizeCallback(win, framebufferResizeCallback);		//<---For resizable window |
 	//glViewport(0, 0, framebufferWidth, framebufferHeight); //Canvas	  		  <----------------+
 
 	glfwMakeContextCurrent(win); //Important for GLEW
 
+	return win;
+}
+
+int main() {
+	//INIT GLFW
+	glfwInit();
+	
+	//CREATE WINDOW
+	const int glMajorVersion = 4;
+	const int glMinorVersion = 5;
+	const int WINDOW_WIDTH = 640;
+	const int WINDOW_HEIGHT = 480;
+	int framebufferWidth = WINDOW_WIDTH;
+	int framebufferHeight = WINDOW_HEIGHT;
+	bool resizable = true;
+
+	GLFWwindow* window = createWindow("Lorem Ipsum Title", WINDOW_WIDTH, WINDOW_HEIGHT, framebufferWidth, framebufferHeight, glMajorVersion, glMinorVersion, resizable);
 
 	//INIT GLEW (REQ WINDOW & OPENGL CONTEXT)
 	glewExperimental = GL_TRUE;
@@ -73,7 +83,7 @@ int main() {
 	//OPENGL OPTIONS
 	glEnable(GL_DEPTH_TEST);
 
-	glEnable(GL_CULL_FACE);			//
+	glEnable(GL_CULL_FACE);				//
 	glCullFace(GL_BACK);				// Uncomment those to render only front faces of triangles
 	glFrontFace(GL_CCW);				//
 
@@ -83,17 +93,17 @@ int main() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL ); //Could be GL_LINE as well as GL_FILL (then will draw only outlines)
 
 	//SHADER INIT
-	Shader core_program((char*)"VertexShader.glsl", (char*)"FragmentShader.glsl");
+	Shader core_program(glMajorVersion, glMinorVersion, (char*)"VertexShader.glsl", (char*)"FragmentShader.glsl");
 
 	//MODEL MESH
-	Mesh test(vertices, nrOfVertices, indices, nrOfIndices);
+	Mesh test(&Plane());
 
 	//TEXTURE INIT
 	//Texture0
-	Texture texture0("Textures/colorfull.png", GL_TEXTURE_2D, 0);
+	Texture texture0("Textures/cherry.png", GL_TEXTURE_2D, 0);
 	
 	//Texture1
-	Texture texture1("Textures/cherry.png", GL_TEXTURE_2D, 1);
+	Texture texture1("Textures/colorfull.png", GL_TEXTURE_2D, 1);
 
 	//Material0			Ambient color	Diffuse	color	Specular color	texture					   specular texture
 	Material material0(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), texture0.getTextureUnit(), texture1.getTextureUnit());
@@ -122,11 +132,11 @@ int main() {
 	core_program.setVec3f(camPosition, "cameraPos");
 	
 	//MAIN LOOP
-	while (!glfwWindowShouldClose(win)) {
+	while (!glfwWindowShouldClose(window)) {
 		//INTERACTING WITH WINDOW
 		glfwPollEvents();
-		updateInput(win, test); //Model control
-		updateInput(win); //Window control
+		updateInput(window, test); //Model control
+		updateInput(window); //Window control
 		//UPDATE GAME INPUT ----------------------------------------------------------------------------------------------------
 
 		//UPDATE GAME ----------------------------------------------------------------------------------------------------------
@@ -143,7 +153,7 @@ int main() {
 		material0.sendToShader(core_program);
 
 		//Update framebuffersize & ProjectionMatrix in case of resizing
-		glfwGetFramebufferSize(win, &framebufferWidth, &framebufferHeight);
+		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 		ProjectionMatrix = glm::mat4(1.f);
 		ProjectionMatrix = glm::perspective(glm::radians(fov), static_cast<float>(framebufferWidth) / framebufferHeight, nearPlane, farPlane);
 		core_program.setMat4fv(ProjectionMatrix, "ProjectionMatrix");
@@ -159,7 +169,7 @@ int main() {
 		test.render(&core_program);
 
 		//End Draw
-		glfwSwapBuffers(win);
+		glfwSwapBuffers(window);
 		glFlush();
 
 		glBindVertexArray(0);
@@ -170,7 +180,7 @@ int main() {
 	}
 	
 	//END OF PROGRAM
-	glfwDestroyWindow(win);
+	glfwDestroyWindow(window);
 	glfwTerminate();
 
 	return 0;

@@ -17,6 +17,8 @@
 class Shader {
 	//Member vars
 	GLuint id;
+	const int versionMajor;
+	const int versionMinor;
 
 	//Private functions
 	std::string loadShaderSource(char*);
@@ -25,7 +27,7 @@ class Shader {
 
 public:
 	//Ctors
-	Shader(char* vertexFile, char* fragmentFile, char* geometryFile = (char*)"");
+	Shader(const int versionMajor, const int versionMinor, char* vertexFile, char* fragmentFile, char* geometryFile = (char*)"");
 	~Shader();
 
 	//Set uniform functions

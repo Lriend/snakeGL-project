@@ -19,6 +19,7 @@
 #include <SOIL2.h>
 
 #include "vertex.h"
+#include "prefab.h"
 #include "shader.h"
 #include "texture.h"
 #include "material.h"

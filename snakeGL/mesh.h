@@ -1,8 +1,10 @@
 #pragma once
+
 #include <iostream>
 #include <vector>
 
 #include "vertex.h"
+#include "prefab.h"
 #include "shader.h"
 #include "texture.h"
 #include "material.h"
@@ -19,13 +21,15 @@ class Mesh
 	glm::mat4 ModelMatrix;
 
 	//Private functions
+	void initVAO(Prefab* prefab);
 	void initVAO(Vertex* vertexArray, const unsigned& nrOfVertices, GLuint* indexArray, const unsigned& nrOfIndices);
 	void updateModelMatrix();
 	void updateUniforms(Shader* shader);
 public:
-	//Ctor & dtor
+	//Ctors & dtor
 	Mesh(Vertex* vertexArray, const unsigned& nrOfVertices, GLuint* indexArray, const unsigned& nrOfIndices, 
 		glm::vec3 position = glm::vec3(0.f), glm::vec3 rotation = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f));
+	Mesh(Prefab* prefab, glm::vec3 position = glm::vec3(0.f), glm::vec3 rotation = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f));
 	~Mesh();
 
 	//Getters
