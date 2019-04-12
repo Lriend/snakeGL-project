@@ -17,7 +17,7 @@ void Game::initWindow(const char* title, bool resizable) {
 
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // For Mac (redundand)
 
-	this->window = glfwCreateWindow(this->WINDOW_WIDTH, this->WINDOW_HEIGHT, title, NULL, NULL);
+	this->window = glfwCreateWindow(this->WINDOW_WIDTH, this->WINDOW_HEIGHT, title, glfwGetPrimaryMonitor(), NULL);
 
 	if (this->window == nullptr) {
 		std::cout << "ERROR! GAME.CPP/INITWINDOW : WINDOW_INIT_FAILED" << std::endl;
@@ -27,6 +27,9 @@ void Game::initWindow(const char* title, bool resizable) {
 	glfwGetFramebufferSize(this->window, &this->frameBufferWidth, &this->frameBufferHeight);			//<----------------+----	//For non-resizable window
 	glfwSetFramebufferSizeCallback(this->window, framebufferResizeCallback);		//<---For resizable window |
 	//glViewport(0, 0, framebufferWidth, framebufferHeight); //Canvas	  		  <----------------+
+
+	//Hide cursor
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 	glfwMakeContextCurrent(this->window); //Important for GLEW
 }
@@ -79,18 +82,19 @@ void Game::initTextures()
 {	
 	this->textures.push_back(new Texture("Textures/star.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/colorfull.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Textures/cherry.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
 {
-	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), STAR, COLORFULL));
+	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), CHERRY, COLORFULL));
 
 }
 
 void Game::initMeshes()
 {
 	this->meshes.push_back(new Mesh(&Plane()));
-	this->meshes.push_back(new Mesh(&Plane()));
+	//this->meshes.push_back(new Mesh(&Plane()));
 }
 
 void Game::initLights()
@@ -205,12 +209,12 @@ void Game::render()
 	this->shaders[SHADER_CORE_PROGRAM]->use();
 
 	//Activate texture
-	this->textures[STAR]->bind(STAR);
+	this->textures[CHERRY]->bind(CHERRY);
 	this->textures[COLORFULL]->bind(COLORFULL);
 
 	//Draw
 	this->meshes[MESH_PLANE]->render(this->shaders[SHADER_CORE_PROGRAM]);
-	this->meshes[1]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	//this->meshes[1]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 	//End Draw
 	glfwSwapBuffers(this->window);
