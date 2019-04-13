@@ -52,7 +52,7 @@ void Game::initOpenGLOptions(GLenum fillOrLine, bool culling, bool blend)
 
 	if (culling) {
 		glEnable(GL_CULL_FACE);				//
-		glCullFace(GL_BACK);				// Uncomment those to render only front faces of triangles
+		glCullFace(GL_BACK);				// Render only front faces of triangles
 		glFrontFace(GL_CCW);				//
 	}				
 
@@ -83,6 +83,8 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("Textures/star.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/colorfull.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/cherry.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Textures/starCube.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Textures/field.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
@@ -93,8 +95,9 @@ void Game::initMaterials()
 
 void Game::initMeshes()
 {
-	this->meshes.push_back(new Mesh(&Plane()));
-	this->meshes.push_back(new Mesh(&Cube(),glm::vec3(0.f), glm::vec3(0.f), glm::vec3(0.5f)));
+	this->meshes.push_back(new Mesh(&Plane(), glm::vec3(-3.f, -4.f, -6.f)));
+	this->meshes.push_back(new Mesh(&Cube(),glm::vec3(0.f, -4.f, -5.f), glm::vec3(0.f), glm::vec3(0.5f)));
+	this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.f, -4.5f, -10.f), glm::vec3(-90.f, 0.f, 0.f), glm::vec3(20.f, 10.f, 1.f)));
 }
 
 void Game::initLights()
@@ -143,7 +146,7 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->initGLFW();
 	this->initWindow(title, resizable);
 	this->initGLEW();
-	this->initOpenGLOptions();
+	this->initOpenGLOptions(GL_FILL);
 	this->initMatrices();
 	this->initShaders();
 	this->initTextures();
@@ -184,11 +187,11 @@ void Game::update()
 
 	//UPDATE GAME INPUT
 	updateInput(this->window);
-	updateInput(this->window, *this->meshes[CUBE]);
+	updateInput(this->window, *this->meshes[MESH_CUBE]);
 
 	//UPDATE GAME 
-	//this->meshes[MESH_PLANE]->rotate(glm::vec3(0.f, 0.2f, 0.f));
-	this->meshes[CUBE]->rotate(glm::vec3(0.2f, 0.f, 0.f));
+	this->meshes[MESH_PLANE]->rotate(glm::vec3(0.f, 0.2f, 0.f));
+	//this->meshes[CUBE]->rotate(glm::vec3(0.2f, 0.f, 0.f));
 }
 
 void Game::render()
@@ -209,16 +212,23 @@ void Game::render()
 	//Use a program
 	this->shaders[SHADER_CORE_PROGRAM]->use();
 
-	//Activate texture
-	//this->textures[CHERRY]->bind(CHERRY);
-	//this->textures[COLORFULL]->bind(COLORFULL);
+	//Activate textures and draw
+	//CHERRY PLANE
+	this->textures[CHERRY]->bind(CHERRY);
+	this->textures[COLORFULL]->bind(COLORFULL);
+	this->meshes[MESH_PLANE]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
-	//Draw
-	//this->meshes[MESH_PLANE]->render(this->shaders[SHADER_CORE_PROGRAM]);
-
-	this->textures[STAR]->bind(CHERRY);
+	//STAR CUBE
+	this->textures[STAR_CUBE]->bind(CHERRY);
 	this->textures[CHERRY]->bind(COLORFULL);
-	this->meshes[CUBE]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	this->meshes[MESH_CUBE]->render(this->shaders[SHADER_CORE_PROGRAM]);
+
+	//FIELD
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	this->textures[FIELD]->bind(CHERRY);
+	this->textures[CHERRY]->bind(COLORFULL);
+	this->meshes[MESH_FIELD]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	//End Draw
 	glfwSwapBuffers(this->window);
@@ -244,6 +254,7 @@ void Game::updateInput(GLFWwindow* window, Mesh& mesh) {
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) mesh.move(glm::vec3(0.f, 0.f, 0.001f));
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) mesh.move(glm::vec3(-0.001f, 0.f, 0.f));
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) mesh.move(glm::vec3(0.001f, 0.f, 0.f));
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) mesh.rotate(glm::vec3(0.1f, 0.f, 0.f));
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) mesh.rotate(glm::vec3(0.f, -0.1f, 0.f));
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) mesh.rotate(glm::vec3(0.f, 0.1f, 0.f));
 	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) mesh.scaleUp(glm::vec3(0.001f));

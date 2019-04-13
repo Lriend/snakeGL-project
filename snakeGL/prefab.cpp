@@ -139,7 +139,7 @@ Cube::Cube() : Prefab() {
 		9, 10, 8, 10, 11, 8,	//Quad Left
 		12, 14, 13, 12, 15, 14,	//Quad Right
 		16, 17, 18, 16, 18, 19,	//Quad Up
-		22, 21, 20, 23, 22, 20
+		22, 21, 20, 23, 22, 20 //Quad down
 	};
 	unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
 

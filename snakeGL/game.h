@@ -4,9 +4,9 @@
 
 //ENUMS
 enum SHADER{SHADER_CORE_PROGRAM};
-enum TEXTURE{STAR, COLORFULL, CHERRY};
+enum TEXTURE{STAR, COLORFULL, CHERRY, STAR_CUBE, FIELD};
 enum MATERIAL{MATERIAL1};
-enum MESH{MESH_PLANE, CUBE};
+enum MESH{MESH_PLANE, MESH_CUBE, MESH_FIELD};
 
 class Game
 {
@@ -46,6 +46,7 @@ class Game
 
 	//Lights
 	std::vector<glm::vec3*> lights;
+
 
 //Private functions
 	void initGLFW();
