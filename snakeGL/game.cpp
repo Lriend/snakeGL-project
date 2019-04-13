@@ -94,7 +94,7 @@ void Game::initMaterials()
 void Game::initMeshes()
 {
 	this->meshes.push_back(new Mesh(&Plane()));
-	//this->meshes.push_back(new Mesh(&Plane()));
+	this->meshes.push_back(new Mesh(&Cube(),glm::vec3(0.f), glm::vec3(0.f), glm::vec3(0.5f)));
 }
 
 void Game::initLights()
@@ -184,10 +184,11 @@ void Game::update()
 
 	//UPDATE GAME INPUT
 	updateInput(this->window);
-	updateInput(this->window, *this->meshes[MESH_PLANE]);
+	updateInput(this->window, *this->meshes[CUBE]);
 
 	//UPDATE GAME 
-
+	//this->meshes[MESH_PLANE]->rotate(glm::vec3(0.f, 0.2f, 0.f));
+	this->meshes[CUBE]->rotate(glm::vec3(0.2f, 0.f, 0.f));
 }
 
 void Game::render()
@@ -209,12 +210,15 @@ void Game::render()
 	this->shaders[SHADER_CORE_PROGRAM]->use();
 
 	//Activate texture
-	this->textures[CHERRY]->bind(CHERRY);
-	this->textures[COLORFULL]->bind(COLORFULL);
+	//this->textures[CHERRY]->bind(CHERRY);
+	//this->textures[COLORFULL]->bind(COLORFULL);
 
 	//Draw
-	this->meshes[MESH_PLANE]->render(this->shaders[SHADER_CORE_PROGRAM]);
-	//this->meshes[1]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	//this->meshes[MESH_PLANE]->render(this->shaders[SHADER_CORE_PROGRAM]);
+
+	this->textures[STAR]->bind(CHERRY);
+	this->textures[CHERRY]->bind(COLORFULL);
+	this->meshes[CUBE]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 	//End Draw
 	glfwSwapBuffers(this->window);

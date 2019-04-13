@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
@@ -39,4 +43,9 @@ public:
 class Plane : public Prefab {
 public:
 	Plane();
+};
+
+class Cube : public Prefab {
+public:
+	Cube();
 };
