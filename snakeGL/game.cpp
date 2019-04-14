@@ -89,7 +89,7 @@ void Game::initTextures()
 
 void Game::initMaterials()
 {
-	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), CHERRY, COLORFULL));
+	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), 0, 1));
 
 }
 
@@ -214,19 +214,18 @@ void Game::render()
 
 	//Activate textures and draw
 	//CHERRY PLANE
-	this->textures[CHERRY]->bind(CHERRY);
-	this->textures[COLORFULL]->bind(COLORFULL);
+	this->textures[CHERRY]->bind(DIFFUSE_TEX);
+	this->textures[COLORFULL]->bind(SPECULAR_TEX);
 	this->meshes[MESH_PLANE]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 	//STAR CUBE
-	this->textures[STAR_CUBE]->bind(CHERRY);
-	this->textures[CHERRY]->bind(COLORFULL);
+	this->textures[STAR_CUBE]->bind(DIFFUSE_TEX);
+	this->textures[CHERRY]->bind(SPECULAR_TEX);
 	this->meshes[MESH_CUBE]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 	//FIELD
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	this->textures[FIELD]->bind(CHERRY);
-	this->textures[CHERRY]->bind(COLORFULL);
+	this->textures[FIELD]->bind(DIFFUSE_TEX);
 	this->meshes[MESH_FIELD]->render(this->shaders[SHADER_CORE_PROGRAM]);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
