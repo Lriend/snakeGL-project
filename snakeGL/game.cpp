@@ -89,15 +89,15 @@ void Game::initTextures()
 
 void Game::initMaterials()
 {
-	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), 0, 1));
+	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), DIFFUSE_TEX, SPECULAR_TEX));
 
 }
 
 void Game::initMeshes()
 {
-	this->meshes.push_back(new Mesh(&Plane(), glm::vec3(-3.f, -4.f, -6.f)));
-	this->meshes.push_back(new Mesh(&Cube(),glm::vec3(0.f, -4.f, -5.f), glm::vec3(0.f), glm::vec3(0.5f)));
-	this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.f, -4.5f, -10.f), glm::vec3(-90.f, 0.f, 0.f), glm::vec3(20.f, 10.f, 1.f)));
+	this->meshes.push_back(new Mesh(&Plane(), glm::vec3(-3.5f, 0.5f, -9.5f))); //Fruit prefab
+	this->meshes.push_back(new Mesh(&Cube(), glm::vec3(-9.5f, 4.5f, -9.75f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f))); //Snake's head prefab
+	this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.f, 0.f, -10.f), glm::vec3(0.f), glm::vec3(20.f, 10.f, 1.f))); //Board prefab
 }
 
 void Game::initLights()
@@ -190,20 +190,15 @@ void Game::update()
 	updateInput(this->window, *this->meshes[MESH_CUBE]);
 
 	//UPDATE GAME 
-	this->meshes[MESH_PLANE]->rotate(glm::vec3(0.f, 0.2f, 0.f));
+	this->meshes[MESH_PLANE]->rotate(glm::vec3(0.f, 20.f, 0.f));
 	//this->meshes[CUBE]->rotate(glm::vec3(0.2f, 0.f, 0.f));
+
 }
 
 void Game::render()
 {
-	//updateInput(this->window); //Window control
-	//UPDATE GAME INPUT ----------------------------------------------------------------------------------------------------
-
-	//UPDATE GAME ----------------------------------------------------------------------------------------------------------
-
-	//DRAW------------------------------------------------------------------------------------------------------------------
 	//Clear
-	glClearColor(0.f, 0.f, 0.f, 1.f); // (R,G,B,Opacity)
+	glClearColor(0.f, 0.f, 0.f, 1.f); // (R,G,B,Opacity) BACKGROUND
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	//Update uniforms
@@ -212,31 +207,47 @@ void Game::render()
 	//Use a program
 	this->shaders[SHADER_CORE_PROGRAM]->use();
 
-	//Activate textures and draw
-	//CHERRY PLANE
-	this->textures[CHERRY]->bind(DIFFUSE_TEX);
-	this->textures[COLORFULL]->bind(SPECULAR_TEX);
-	this->meshes[MESH_PLANE]->render(this->shaders[SHADER_CORE_PROGRAM]);
-
-	//STAR CUBE
-	this->textures[STAR_CUBE]->bind(DIFFUSE_TEX);
-	this->textures[CHERRY]->bind(SPECULAR_TEX);
-	this->meshes[MESH_CUBE]->render(this->shaders[SHADER_CORE_PROGRAM]);
-
-	//FIELD
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	this->textures[FIELD]->bind(DIFFUSE_TEX);
-	this->meshes[MESH_FIELD]->render(this->shaders[SHADER_CORE_PROGRAM]);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//Activate textures and draw stuff
+	drawBoard();
+	drawSnake();
+	drawFruits();
 
 	//End Draw
-	glfwSwapBuffers(this->window);
-	glFlush();
+	glfwSwapBuffers(this->window); //Swap frames
+	glFlush(); //glFlush -> GL. Flush.
 
+	//Reset
 	glBindVertexArray(0);
 	glUseProgram(0);
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Game::drawBoard()
+{
+	//FIELD do zmiany ofc
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	this->textures[FIELD]->bind(DIFFUSE_TEX);
+	this->meshes[MESH_FIELD]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void Game::drawSnake()
+{
+	//STAR CUBE same ting
+	this->textures[STAR_CUBE]->bind(DIFFUSE_TEX);
+	this->textures[CHERRY]->bind(SPECULAR_TEX);
+	this->meshes[MESH_CUBE]->render(this->shaders[SHADER_CORE_PROGRAM]);
+
+}
+
+void Game::drawFruits()
+{
+	//CHERRY PLANE yes.
+	this->textures[CHERRY]->bind(DIFFUSE_TEX);
+	this->textures[COLORFULL]->bind(SPECULAR_TEX);
+	this->meshes[MESH_PLANE]->render(this->shaders[SHADER_CORE_PROGRAM]);
+
 }
 
 //Static functions
@@ -249,13 +260,16 @@ void Game::updateInput(GLFWwindow* window) {
 }
 
 void Game::updateInput(GLFWwindow* window, Mesh& mesh) {
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) mesh.move(glm::vec3(0.f, 0.f, -0.001f));
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) mesh.move(glm::vec3(0.f, 0.f, 0.001f));
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) mesh.move(glm::vec3(-0.001f, 0.f, 0.f));
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) mesh.move(glm::vec3(0.001f, 0.f, 0.f));
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) mesh.rotate(glm::vec3(0.1f, 0.f, 0.f));
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) mesh.rotate(glm::vec3(0.f, -0.1f, 0.f));
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) mesh.rotate(glm::vec3(0.f, 0.1f, 0.f));
-	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) mesh.scaleUp(glm::vec3(0.001f));
-	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) mesh.scaleUp(glm::vec3(-0.001f));
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) mesh.move(glm::vec3(0.f, 1.f, 0.f));
+	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) mesh.move(glm::vec3(0.f, -1.f, 0.f));
+	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) mesh.move(glm::vec3(-1.f, 0.f, 0.f));
+	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) mesh.move(glm::vec3(1.f, 0.f, 0.f));
+	Sleep(100);
+	//PRZEROBIC NA ASYNC BO WSTYD XD
+
+	//if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) mesh.rotate(glm::vec3(0.1f, 0.f, 0.f));
+	//if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) mesh.rotate(glm::vec3(0.f, -0.1f, 0.f));
+	//if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) mesh.rotate(glm::vec3(0.f, 0.1f, 0.f));
+	//if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) mesh.scaleUp(glm::vec3(0.001f));
+	//if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) mesh.scaleUp(glm::vec3(-0.001f));
 }

@@ -81,6 +81,10 @@ public:
 	void update();
 	void render();
 
+	void drawBoard();
+	void drawSnake();
+	void drawFruits();
+
 //Static functions
 	static void framebufferResizeCallback(GLFWwindow* window, int fbW, int fbH);
 	static void updateInput(GLFWwindow* window);
