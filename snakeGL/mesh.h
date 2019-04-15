@@ -33,6 +33,8 @@ public:
 	~Mesh();
 
 	//Getters
+	glm::vec3 getPosition();
+
 	//Setters
 	void setPosition(const glm::vec3 position);
 	void setRotation(const glm::vec3 rotation);

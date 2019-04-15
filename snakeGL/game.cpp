@@ -95,14 +95,23 @@ void Game::initMaterials()
 
 void Game::initMeshes()
 {
-	this->meshes.push_back(new Mesh(&Plane(), glm::vec3(-3.5f, 0.5f, -9.5f))); //Fruit prefab
-	this->meshes.push_back(new Mesh(&Cube(), glm::vec3(-9.5f, 4.5f, -9.75f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f))); //Snake's head prefab
-	this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.f, 0.f, -10.f), glm::vec3(0.f), glm::vec3(20.f, 10.f, 1.f))); //Board prefab
+	this->meshes.push_back(new Mesh(&Plane(), glm::vec3(-3.f, 0.f, -9.75f))); //Fruit prefab
+	this->meshes.push_back(new Mesh(&Cube(), glm::vec3(-9.f, 4.f, -9.75f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f))); //Snake's head prefab
+	//this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.f, 0.f, -10.f), glm::vec3(0.f), glm::vec3(20.f, 10.f, 1.f))); //Board prefab
 }
 
 void Game::initLights()
 {
 	this->lights.push_back(new glm::vec3(0.f, 0.f, 1.f));
+}
+
+void Game::initBoard(int width, int height)
+{
+	this->boardWidth = width;
+	this->boardHeight = height;
+	for (int i = 0; i < boardWidth; i++)
+		for (int j = 0; j < boardHeight; j++)
+			this->board.push_back(new Mesh(&Quad(), glm::vec3(i - this->boardWidth / 2, j - this->boardHeight / 2, -10.f)));
 }
 
 void Game::initUniforms()
@@ -154,6 +163,7 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->initMeshes();
 	this->initLights();
 	this->initUniforms();
+	this->initBoard(30,15);
 }
 
 Game::~Game()
@@ -198,7 +208,7 @@ void Game::update()
 void Game::render()
 {
 	//Clear
-	glClearColor(0.f, 0.f, 0.f, 1.f); // (R,G,B,Opacity) BACKGROUND
+	glClearColor(0.2f, 0.2f, 0.2f, 1.f); // (R,G,B,Opacity) BACKGROUND
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	//Update uniforms
@@ -225,19 +235,21 @@ void Game::render()
 
 void Game::drawBoard()
 {
-	//FIELD do zmiany ofc
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	this->textures[FIELD]->bind(DIFFUSE_TEX);
-	this->meshes[MESH_FIELD]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	for (int i = 0; i < this->board.size(); i++)
+		this->board[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void Game::drawSnake()
 {
 	//STAR CUBE same ting
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	this->textures[STAR_CUBE]->bind(DIFFUSE_TEX);
 	this->textures[CHERRY]->bind(SPECULAR_TEX);
 	this->meshes[MESH_CUBE]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 }
 
@@ -260,10 +272,10 @@ void Game::updateInput(GLFWwindow* window) {
 }
 
 void Game::updateInput(GLFWwindow* window, Mesh& mesh) {
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) mesh.move(glm::vec3(0.f, 1.f, 0.f));
-	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) mesh.move(glm::vec3(0.f, -1.f, 0.f));
-	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) mesh.move(glm::vec3(-1.f, 0.f, 0.f));
-	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) mesh.move(glm::vec3(1.f, 0.f, 0.f));
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && mesh.getPosition().y <= 15 / 2 - 1) mesh.move(glm::vec3(0.f, 1.f, 0.f));
+	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && mesh.getPosition().y >= -15 / 2 + 1) mesh.move(glm::vec3(0.f, -1.f, 0.f));
+	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && mesh.getPosition().x >= -30 / 2 + 1) mesh.move(glm::vec3(-1.f, 0.f, 0.f));
+	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && mesh.getPosition().x < 30 / 2 - 1) mesh.move(glm::vec3(1.f, 0.f, 0.f));
 	Sleep(100);
 	//PRZEROBIC NA ASYNC BO WSTYD XD
 

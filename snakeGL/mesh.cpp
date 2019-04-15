@@ -125,6 +125,10 @@ Mesh::~Mesh()
 }
 
 //Getters
+glm::vec3 Mesh::getPosition()
+{
+	return position;
+}
 
 //Setters
 void Mesh::setPosition(const glm::vec3 position) {

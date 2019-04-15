@@ -48,6 +48,10 @@ class Game
 	//Lights
 	std::vector<glm::vec3*> lights;
 
+	//Board
+	int boardWidth;
+	int boardHeight;
+	std::vector<Mesh*> board;
 
 //Private functions
 	void initGLFW();
@@ -60,10 +64,12 @@ class Game
 	void initMaterials();
 	void initMeshes();
 	void initLights();
+	void initBoard(int width, int height);
 	void initUniforms();
 
 	void updateUniforms();
 
+	void boardSnook();
 //Static vars
 
 public:
