@@ -60,6 +60,7 @@ class Game
 	std::deque<Mesh*> tail;
 	int direction;
 	bool shouldGrow;
+	bool gameOver;
 
 	//Fruits
 	int amountOfFruits;
@@ -109,6 +110,7 @@ public:
 
 	void updateFruits();
 	void updateDirection();
+	void updateGameOver();
 
 //Static functions
 	static void framebufferResizeCallback(GLFWwindow* window, int fbW, int fbH);

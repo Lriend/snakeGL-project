@@ -159,6 +159,7 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 
 	this->direction = RIGHT;
 	this->shouldGrow = true;
+	this->gameOver = false;
 
 	this->window = nullptr;
 	this->frameBufferHeight = this->WINDOW_HEIGHT;
@@ -225,10 +226,10 @@ void Game::update()
 	//UPDATE GAME INPUT
 	//updateInput(this->window, *this->head);
 	updateDirection();
-
 	//UPDATE GAME
-	if (shouldGrow) growTail();
-	else moveTail();
+	if (!gameOver)
+		if (shouldGrow) growTail();
+		else moveTail();
 	moveSnake();
 	updateFruits();
 
@@ -236,7 +237,7 @@ void Game::update()
 	//for (size_t i = 0; i < this->fruits.size(); i++)	this->fruits[i]->rotate(glm::vec3(0.f, 5.f, 0.f));
 	//this->meshes[CUBE]->rotate(glm::vec3(0.2f, 0.f, 0.f));
 
-	Sleep(100);
+	updateGameOver();
 }
 
 void Game::render()
@@ -265,6 +266,8 @@ void Game::render()
 	glUseProgram(0);
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	Sleep(500);
 }
 
 void Game::drawBoard()
@@ -303,12 +306,7 @@ void Game::drawFruits()
 
 void Game::moveSnake()
 {
-	if  (
-		this->head->getPosition().y < this->boardPos.y + this->boardHeight
-		&& this->head->getPosition().y >= this->boardPos.y
-		&& this->head->getPosition().x >= this->boardPos.x
-		&& this->head->getPosition().x < this->boardPos.x + this->boardWidth
-		)
+	if (!gameOver)
 	switch (this->direction)
 	{
 	case UP: this->head->move(glm::vec3(0.f, 1.f, 0.f)); break;
@@ -332,13 +330,17 @@ void Game::growTail()
 
 void Game::updateFruits()
 {
-	for (size_t i = 0; i < this->fruits.size(); i++)
-		if (this->fruits[i]->getPosition() == this->head->getPosition())
-		{
+	for (size_t i = 0; i < this->fruits.size(); i++) {
+		bool getOutOfHere = false;
+		while (this->fruits[i]->getPosition() == this->head->getPosition() || getOutOfHere) {
+			getOutOfHere = false;
+			if (tail.size() == board.size() - amountOfFruits) { amountOfFruits--;  return; }
 			this->shouldGrow = true;
-			while (this->fruits[i]->getPosition() == this->head->getPosition()) //DOPISAC OGON!!!
-				this->fruits[i]->setPosition(glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -9.75f));
+			this->fruits[i]->setPosition(glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -9.75f));
+			for (size_t j = 0; j < this->tail.size(); j++) if (this->tail[j]->getPosition() == this->fruits[i]->getPosition()) getOutOfHere = true;
+			for (size_t j = 0; j < this->fruits.size(); j++) if (this->fruits[j]->getPosition() == this->fruits[i]->getPosition() && i!=j) getOutOfHere = true;
 		}
+	}
 }
 
 void Game::updateDirection()
@@ -347,6 +349,17 @@ void Game::updateDirection()
 	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && tail.back()->getPosition().y >= head->getPosition().y) this->direction = DOWN;
 	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && tail.back()->getPosition().x >= head->getPosition().x) this->direction = LEFT;
 	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && tail.back()->getPosition().x <= head->getPosition().x) this->direction = RIGHT;
+}
+
+void Game::updateGameOver()
+{
+	if (
+		this->head->getPosition().y >= this->boardPos.y + this->boardHeight
+		|| this->head->getPosition().y < this->boardPos.y
+		|| this->head->getPosition().x < this->boardPos.x
+		|| this->head->getPosition().x > this->boardPos.x + this->boardWidth
+		) gameOver = true;
+	for (size_t i = 0; i < tail.size(); i++) if (tail[i]->getPosition() == head->getPosition()) gameOver = true;
 }
 
 //Static functions
