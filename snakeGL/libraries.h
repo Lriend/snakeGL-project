@@ -4,6 +4,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <random>
+#include <time.h>
 
 #include <Windows.h>
 

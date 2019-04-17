@@ -51,7 +51,16 @@ class Game
 	//Board
 	int boardWidth;
 	int boardHeight;
+	glm::vec2 boardPos;
 	std::vector<Mesh*> board;
+	
+	//Snake
+	Mesh* head;
+	std::vector<Mesh*> tail;
+
+	//Fruits
+	int amountOfFruits;
+	std::vector<Mesh*> fruits;
 
 //Private functions
 	void initGLFW();
@@ -66,15 +75,15 @@ class Game
 	void initLights();
 	void initBoard(int width, int height);
 	void initUniforms();
+	void initHead();
+	void initFruits();
 
 	void updateUniforms();
-
-	void boardSnook();
 //Static vars
 
 public:
 //Ctor & dtor
-	Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable);
+	Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable, int boardWidth, int boardHeight, int amountOfFruits);
 	virtual ~Game();
 
 //Getters
@@ -90,6 +99,9 @@ public:
 	void drawBoard();
 	void drawSnake();
 	void drawFruits();
+
+	void updateSnake();
+	void updateFruits();
 
 //Static functions
 	static void framebufferResizeCallback(GLFWwindow* window, int fbW, int fbH);
