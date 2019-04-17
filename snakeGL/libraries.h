@@ -6,6 +6,7 @@
 #include <vector>
 #include <random>
 #include <time.h>
+#include <queue>
 
 #include <Windows.h>
 

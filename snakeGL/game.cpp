@@ -85,6 +85,8 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("Textures/cherry.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/starCube.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/field.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Textures/tailtemptex.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Textures/tailtrantemptex.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
@@ -119,7 +121,7 @@ void Game::initHead() {
 
 void Game::initFruits()
 {
-	std::srand(time(0));
+	std::srand((unsigned int)time(NULL));
 	for (int i = 0; i < this->amountOfFruits; i++)
 		this->fruits.push_back(new Mesh(&Plane(), glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -9.75f)));
 }
@@ -155,6 +157,9 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 
 	this->amountOfFruits = amountOfFruits;
 
+	this->direction = RIGHT;
+	this->shouldGrow = true;
+
 	this->window = nullptr;
 	this->frameBufferHeight = this->WINDOW_HEIGHT;
 	this->frameBufferWidth = this->WINDOW_WIDTH;
@@ -180,6 +185,7 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->initUniforms();
 	this->initBoard(this->boardWidth, this->boardHeight);
 	this->initHead();
+	this->growTail();
 	this->initFruits();
 }
 
@@ -214,19 +220,23 @@ void Game::update()
 {
 	//INTERACTING WITH WINDOW
 	glfwPollEvents();
-
-	//UPDATE GAME INPUT
 	updateInput(this->window);
+	
+	//UPDATE GAME INPUT
 	//updateInput(this->window, *this->head);
-	updateSnake();
-	updateFruits();
+	updateDirection();
 
 	//UPDATE GAME
+	if (shouldGrow) growTail();
+	else moveTail();
+	moveSnake();
+	updateFruits();
+
 	//Rotate fruits
-	for (size_t i = 0; i < this->fruits.size(); i++)
-		this->fruits[i]->rotate(glm::vec3(0.f, 20.f, 0.f));
+	//for (size_t i = 0; i < this->fruits.size(); i++)	this->fruits[i]->rotate(glm::vec3(0.f, 5.f, 0.f));
 	//this->meshes[CUBE]->rotate(glm::vec3(0.2f, 0.f, 0.f));
 
+	Sleep(100);
 }
 
 void Game::render()
@@ -261,7 +271,7 @@ void Game::drawBoard()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	this->textures[FIELD]->bind(DIFFUSE_TEX);
-	for (int i = 0; i < this->board.size(); i++)
+	for (size_t i = 0; i < this->board.size(); i++)
 		this->board[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
@@ -275,6 +285,10 @@ void Game::drawSnake()
 	this->head->render(this->shaders[SHADER_CORE_PROGRAM]);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	this->textures[TAIL_RGB]->bind(DIFFUSE_TEX);
+	this->textures[TAIL_RGBA]->bind(SPECULAR_TEX);
+	for (size_t i = 0; i < this->tail.size(); i++)
+		this->tail[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 }
 
 void Game::drawFruits()
@@ -287,13 +301,33 @@ void Game::drawFruits()
 
 }
 
-void Game::updateSnake()
+void Game::moveSnake()
 {
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && this->head->getPosition().y < this->boardPos.y + this->boardHeight - 1.f) this->head->move(glm::vec3(0.f, 1.f, 0.f));
-	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && this->head->getPosition().y > this->boardPos.y) this->head->move(glm::vec3(0.f, -1.f, 0.f));
-	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && this->head->getPosition().x > this->boardPos.x) this->head->move(glm::vec3(-1.f, 0.f, 0.f));
-	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && this->head->getPosition().x < this->boardPos.x + this->boardWidth - 1.f) this->head->move(glm::vec3(1.f, 0.f, 0.f));
-	Sleep(100);
+	if  (
+		this->head->getPosition().y < this->boardPos.y + this->boardHeight
+		&& this->head->getPosition().y >= this->boardPos.y
+		&& this->head->getPosition().x >= this->boardPos.x
+		&& this->head->getPosition().x < this->boardPos.x + this->boardWidth
+		)
+	switch (this->direction)
+	{
+	case UP: this->head->move(glm::vec3(0.f, 1.f, 0.f)); break;
+	case DOWN: this->head->move(glm::vec3(0.f, -1.f, 0.f)); break;
+	case LEFT: this->head->move(glm::vec3(-1.f, 0.f, 0.f)); break;
+	case RIGHT: this->head->move(glm::vec3(1.f, 0.f, 0.f)); break;
+	}
+}
+
+void Game::moveTail()
+{
+	this->tail.push_back(new Mesh(&Cube(), glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -9.75f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f)));
+	tail.pop_front();
+}
+
+void Game::growTail()
+{
+	this->tail.push_back(new Mesh(&Cube(), glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -9.75f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f)));
+	this->shouldGrow = false;
 }
 
 void Game::updateFruits()
@@ -301,9 +335,18 @@ void Game::updateFruits()
 	for (size_t i = 0; i < this->fruits.size(); i++)
 		if (this->fruits[i]->getPosition() == this->head->getPosition())
 		{
+			this->shouldGrow = true;
 			while (this->fruits[i]->getPosition() == this->head->getPosition()) //DOPISAC OGON!!!
 				this->fruits[i]->setPosition(glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -9.75f));
 		}
+}
+
+void Game::updateDirection()
+{
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && tail.back()->getPosition().y <= head->getPosition().y) this->direction = UP;
+	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && tail.back()->getPosition().y >= head->getPosition().y) this->direction = DOWN;
+	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && tail.back()->getPosition().x >= head->getPosition().x) this->direction = LEFT;
+	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && tail.back()->getPosition().x <= head->getPosition().x) this->direction = RIGHT;
 }
 
 //Static functions
