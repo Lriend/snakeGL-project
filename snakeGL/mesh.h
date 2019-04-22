@@ -12,17 +12,21 @@
 class Mesh
 {
 	//Member vars
+	Vertex* vertexArray;
 	unsigned nrOfVertices;
+	GLuint* indexArray;
 	unsigned nrOfIndices;
+
 	GLuint VAO, VBO, EBO;
+	
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
+	
 	glm::mat4 ModelMatrix;
 
 	//Private functions
-	void initVAO(Prefab* prefab);
-	void initVAO(Vertex* vertexArray, const unsigned& nrOfVertices, GLuint* indexArray, const unsigned& nrOfIndices);
+	void initVAO();
 	void updateModelMatrix();
 	void updateUniforms(Shader* shader);
 public:
@@ -30,6 +34,7 @@ public:
 	Mesh(Vertex* vertexArray, const unsigned& nrOfVertices, GLuint* indexArray, const unsigned& nrOfIndices, 
 		glm::vec3 position = glm::vec3(0.f), glm::vec3 rotation = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f));
 	Mesh(Prefab* prefab, glm::vec3 position = glm::vec3(0.f), glm::vec3 rotation = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f));
+	Mesh(const Mesh& obj);
 	~Mesh();
 
 	//Getters

@@ -9,7 +9,6 @@ struct Material{
 };
 
 in vec3 vs_position;
-in vec3 vs_color;
 in vec2 vs_texcoord;
 in vec3 vs_normal;
 
@@ -34,16 +33,15 @@ vec3 calculateSpecular(Material material, vec3 vs_position, vec3 vs_normal, vec3
 	vec3 lightToPosDirVec = normalize(vs_position - lightPos0);
 	vec3 reflectDirVec = normalize(reflect(lightToPosDirVec, normalize(vs_normal)));
 	vec3 posToViewDirVec = normalize(cameraPos-vs_position);
-	float specularConstant = pow(max(dot(posToViewDirVec, reflectDirVec), 0), 35);
+	float specularConstant = pow(max(dot(posToViewDirVec, reflectDirVec), 0), 20);
 	vec3 specularFinal = material.specular * specularConstant;
 	return specularFinal;
 	}
 
 void main()
 {
-	//fs_color = vec4(vs_color, 1.f);									//to draw color
 	//fs_color = texture(texture0, vs_texcoord);						//to draw texture
-	//fs_color = texture(texture0, vs_texcoord) / texture(texture1, vs_texcoord) * vec4(vs_color, 1.f); 
+	//fs_color = texture(texture0, vs_texcoord) / texture(texture1, vs_texcoord) 
 
 	//Ambient light
 	vec3 ambientFinal = calculateAmbient(material);
@@ -59,7 +57,5 @@ void main()
 
 	//Final light
 	fs_color = texture(material.diffuseTex, vs_texcoord) *
-	//vec4(vs_color, 0.5f) * 
 	(vec4(ambientFinal, 1.f) + vec4(diffuseFinal, 1.f) + vec4(specularFinal, 1.f)); 
-	//Every image processing could be done [Multiply/Divide/Add/Substract/Negative/etc...]
 }

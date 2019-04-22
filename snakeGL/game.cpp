@@ -62,6 +62,8 @@ void Game::initOpenGLOptions(GLenum fillOrLine, bool culling, bool blend)
 	}
 
 	glPolygonMode(GL_FRONT_AND_BACK, fillOrLine); //Could be GL_LINE as well as GL_FILL (then will draw only outlines)
+
+	glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Game::initMatrices()
@@ -80,26 +82,28 @@ void Game::initShaders()
 
 void Game::initTextures()
 {	
-	this->textures.push_back(new Texture("Textures/star.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Textures/colorfull.png", GL_TEXTURE_2D));
+	//this->textures.push_back(new Texture("Textures/star.png", GL_TEXTURE_2D));
+	//this->textures.push_back(new Texture("Textures/colorfull.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/cherry.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/starCube.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/field.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/tailtemptex.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Textures/tailtrantemptex.png", GL_TEXTURE_2D));
+	//this->textures.push_back(new Texture("Textures/tailtrantemptex.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
 {
 	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), DIFFUSE_TEX, SPECULAR_TEX));
-
 }
 
-void Game::initMeshes()
+void Game::initModels()
 {
-	//this->meshes.push_back(new Mesh(&Plane(), glm::vec3(-3.f, 0.f, -9.75f))); //Fruit prefab
 	//this->meshes.push_back(new Mesh(&Cube(), glm::vec3(-9.f, 4.f, -9.75f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f))); //Snake's head prefab
 	//this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.f, 0.f, -10.f), glm::vec3(0.f), glm::vec3(20.f, 10.f, 1.f))); //Board prefab
+	this->meshes.push_back(new Mesh(&Plane(), glm::vec3(-3.f, 0.f, -9.75f / 3))); //Fruit prefab
+	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[CHERRY], this->textures[CHERRY], this->meshes));
+	for (auto*&i : this->meshes) delete i;
+	this->meshes.clear();
 }
 
 void Game::initLights()
@@ -137,9 +141,7 @@ void Game::initUniforms()
 
 void Game::updateUniforms()
 {
-	//Update uniforms
-	this->materials[MATERIAL1]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
-
+	
 	//Update framebuffersize & ProjectionMatrix in case of resizing
 	glfwGetFramebufferSize(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
 	this->ProjectionMatrix = glm::mat4(1.f);
@@ -173,6 +175,10 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->nearPlane = 0.1f;
 	this->farPlane = 1000.f;
 
+	this->deltaTime = 0.f;
+	this->curTime = 0.f;
+	this->lastTime = 0.f;
+
 	this->initGLFW();
 	this->initWindow(title, resizable);
 	this->initGLEW();
@@ -181,7 +187,7 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->initShaders();
 	this->initTextures();
 	this->initMaterials();
-	//this->initMeshes();
+	this->initModels();
 	this->initLights();
 	this->initUniforms();
 	this->initBoard(this->boardWidth, this->boardHeight);
@@ -197,7 +203,7 @@ Game::~Game()
 	for (size_t i = 0; i < this->shaders.size(); i++) delete this->shaders[i];
 	for (size_t i = 0; i < this->textures.size(); i++) delete this->textures[i];
 	for (size_t i = 0; i < this->materials.size(); i++) delete this->materials[i];
-	for (size_t i = 0; i < this->meshes.size(); i++) delete this->meshes[i];
+	for (auto*&i : this->models) delete i;
 	for (size_t i = 0; i < this->lights.size(); i++) delete this->lights[i];
 	for (size_t i = 0; i < this->board.size(); i++) delete this->board[i];
 	for (size_t i = 0; i < this->tail.size(); i++) delete this->tail[i];
@@ -219,13 +225,18 @@ void Game::setWindowShouldClose()
 //Functions
 void Game::update()
 {
+	//UPDATE DELTA TIME
+	this->updateDeltaTime();
+
 	//INTERACTING WITH WINDOW
-	glfwPollEvents();
 	updateInput(this->window);
+
+	//UPDATE MOUSE INPUT
+	updateMouseInput();
 	
 	//UPDATE GAME INPUT
-	//updateInput(this->window, *this->head);
 	updateDirection();
+
 	//UPDATE GAME
 	if (!gameOver)
 		if (shouldGrow) growTail();
@@ -234,8 +245,8 @@ void Game::update()
 	updateFruits();
 
 	//Rotate fruits
-	//for (size_t i = 0; i < this->fruits.size(); i++)	this->fruits[i]->rotate(glm::vec3(0.f, 5.f, 0.f));
-	//this->meshes[CUBE]->rotate(glm::vec3(0.2f, 0.f, 0.f));
+	//for (size_t i = 0; i < this->fruits.size(); i++)	this->fruits[i]->rotate(glm::vec3(0.f, 5.f, 0.f)*this->deltaTime);
+	this->models[0]->rotate(glm::vec3(0.f, 5.f, 0.f)*this->deltaTime);
 
 	updateGameOver();
 }
@@ -248,6 +259,7 @@ void Game::render()
 
 	//Update uniforms
 	this->updateUniforms();
+	this->materials[MATERIAL1]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
 
 	//Use a program
 	this->shaders[SHADER_CORE_PROGRAM]->use();
@@ -256,6 +268,9 @@ void Game::render()
 	drawBoard();
 	drawSnake();
 	drawFruits();
+
+	//MODEL CLASS ATTEMPT
+	this->models[0]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 	//End Draw
 	glfwSwapBuffers(this->window); //Swap frames
@@ -274,6 +289,7 @@ void Game::drawBoard()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	this->textures[FIELD]->bind(DIFFUSE_TEX);
+	this->textures[FIELD]->bind(SPECULAR_TEX); //Do podmiany tekstura specular
 	for (size_t i = 0; i < this->board.size(); i++)
 		this->board[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -284,12 +300,12 @@ void Game::drawSnake()
 	//STAR CUBE same ting
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	this->textures[STAR_CUBE]->bind(DIFFUSE_TEX);
-	this->textures[CHERRY]->bind(SPECULAR_TEX);
+	this->textures[STAR_CUBE]->bind(SPECULAR_TEX); //Do podmiany tekstura specular
 	this->head->render(this->shaders[SHADER_CORE_PROGRAM]);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	this->textures[TAIL_RGB]->bind(DIFFUSE_TEX);
-	this->textures[TAIL_RGBA]->bind(SPECULAR_TEX);
+	this->textures[TAIL_RGB]->bind(SPECULAR_TEX); //Do podmiany tekstura specular
 	for (size_t i = 0; i < this->tail.size(); i++)
 		this->tail[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 }
@@ -298,7 +314,7 @@ void Game::drawFruits()
 {
 	//CHERRY PLANE yes.
 	this->textures[CHERRY]->bind(DIFFUSE_TEX);
-	this->textures[COLORFULL]->bind(SPECULAR_TEX);
+	this->textures[CHERRY]->bind(SPECULAR_TEX); //Do podmiany tekstura specular
 	for (size_t i = 0; i < this->fruits.size(); i++)
 		this->fruits[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
@@ -362,12 +378,37 @@ void Game::updateGameOver()
 	for (size_t i = 0; i < tail.size(); i++) if (tail[i]->getPosition() == head->getPosition()) gameOver = true;
 }
 
+void Game::updateMouseInput()
+{
+	glfwGetCursorPos(this->window, &this->mouseX, &this->mouseY);
+	if (this->mouseInit) {
+		this->lastMouseX = this->mouseX;
+		this->lastMouseY = this->mouseY;
+		this->mouseInit = false;
+	}
+
+	//Calculate offset
+	this->mouseOffsetX = this->mouseX - this->lastMouseX;
+	this->mouseOffsetY = this->lastMouseY - this->mouseY;
+
+	this->lastMouseX = this->mouseX;
+	this->lastMouseY = this->mouseY;
+}
+
+void Game::updateDeltaTime()
+{
+	this->curTime = static_cast<float>(glfwGetTime());
+	this->deltaTime = this->curTime - this->lastTime;
+	this->lastTime = this->curTime;
+}
+
 //Static functions
 void Game::framebufferResizeCallback(GLFWwindow* window, int fbW, int fbH) {
 	glViewport(0, 0, fbW, fbH);
 }
 
 void Game::updateInput(GLFWwindow* window) {
+	glfwPollEvents();
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, GL_TRUE);
 }
 

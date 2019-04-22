@@ -4,10 +4,10 @@
 
 //ENUMS
 enum SHADER{SHADER_CORE_PROGRAM};
-enum TEXTURE{STAR, COLORFULL, CHERRY, STAR_CUBE, FIELD, TAIL_RGB, TAIL_RGBA};
+enum TEXTURE{CHERRY, STAR_CUBE, FIELD, TAIL_RGB};
 enum MATERIAL{MATERIAL1};
 enum MESH{MESH_PLANE, MESH_CUBE, MESH_FIELD};
-enum TEXTURE_UNITS{DIFFUSE_TEX, SPECULAR_TEX};
+//enum TEXTURE_UNITS{DIFFUSE_TEX, SPECULAR_TEX};
 enum DIRECTION{UP, DOWN, LEFT, RIGHT};
 
 class Game
@@ -24,12 +24,28 @@ class Game
 	const int GL_VERSION_MAJOR;
 	const int GL_VERSION_MINOR;
 
+	//Delta time
+	float deltaTime;
+	float curTime;
+	float lastTime;
+
+	//Mouse Input
+	double lastMouseX;
+	double lastMouseY;
+	double mouseX;
+	double mouseY;
+	double mouseOffsetX;
+	double mouseOffsetY;
+	bool mouseInit;
+
 	//Matrices
 	glm::mat4 ViewMatrix;
 	glm::vec3 camPosition;
 	glm::vec3 worldUp;
 	glm::vec3 camFront;
 	glm::mat4 ProjectionMatrix;
+
+	//Camera
 	float fov;
 	float nearPlane;
 	float farPlane;
@@ -45,6 +61,9 @@ class Game
 
 	//Meshes
 	std::vector<Mesh*> meshes;
+
+	//Models
+	std::vector<Model*> models;
 
 	//Lights
 	std::vector<glm::vec3*> lights;
@@ -75,7 +94,7 @@ class Game
 	void initShaders();
 	void initTextures();
 	void initMaterials();
-	void initMeshes();
+	void initModels();
 	void initLights();
 	void initBoard(int width, int height);
 	void initUniforms();
@@ -111,6 +130,9 @@ public:
 	void updateFruits();
 	void updateDirection();
 	void updateGameOver();
+
+	void updateMouseInput();
+	void updateDeltaTime();
 
 //Static functions
 	static void framebufferResizeCallback(GLFWwindow* window, int fbW, int fbH);
