@@ -83,7 +83,7 @@ void Game::initShaders()
 void Game::initTextures()
 {	
 	//this->textures.push_back(new Texture("Textures/star.png", GL_TEXTURE_2D));
-	//this->textures.push_back(new Texture("Textures/colorfull.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Textures/colorfull.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/cherry.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/starCube.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/field.png", GL_TEXTURE_2D));
@@ -102,6 +102,11 @@ void Game::initModels()
 	//this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.f, 0.f, -10.f), glm::vec3(0.f), glm::vec3(20.f, 10.f, 1.f))); //Board prefab
 	this->meshes.push_back(new Mesh(&Plane(), glm::vec3(-3.f, 0.f, -9.75f / 3))); //Fruit prefab
 	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[CHERRY], this->textures[CHERRY], this->meshes));
+	for (auto*&i : this->meshes) delete i;
+	this->meshes.clear();
+
+	this->meshes.push_back(new Mesh(&Object("Objects/untitled.obj"), glm::vec3(0.f, 0.f, -5.f)));
+	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[STAR_CUBE], this->textures[STAR_CUBE], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 }
@@ -182,7 +187,7 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->initGLFW();
 	this->initWindow(title, resizable);
 	this->initGLEW();
-	this->initOpenGLOptions(GL_FILL);
+	this->initOpenGLOptions(GL_LINE, false);
 	this->initMatrices();
 	this->initShaders();
 	this->initTextures();
@@ -246,7 +251,7 @@ void Game::update()
 
 	//Rotate fruits
 	//for (size_t i = 0; i < this->fruits.size(); i++)	this->fruits[i]->rotate(glm::vec3(0.f, 5.f, 0.f)*this->deltaTime);
-	this->models[0]->rotate(glm::vec3(0.f, 5.f, 0.f)*this->deltaTime);
+	this->models[0]->rotate(glm::vec3(0.f, 5.f, 0.f)/**this->deltaTime*/);
 
 	updateGameOver();
 }
@@ -269,6 +274,9 @@ void Game::render()
 	drawSnake();
 	drawFruits();
 
+	//Object from file attempt
+	this->models[1]->render(this->shaders[SHADER_CORE_PROGRAM]);
+
 	//MODEL CLASS ATTEMPT
 	this->models[0]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
@@ -282,7 +290,7 @@ void Game::render()
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	Sleep(500);
+	Sleep(150);
 }
 
 void Game::drawBoard()
@@ -292,7 +300,7 @@ void Game::drawBoard()
 	this->textures[FIELD]->bind(SPECULAR_TEX); //Do podmiany tekstura specular
 	for (size_t i = 0; i < this->board.size(); i++)
 		this->board[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void Game::drawSnake()

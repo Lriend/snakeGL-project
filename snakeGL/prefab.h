@@ -12,6 +12,7 @@
 
 class Prefab
 {
+protected:
 	//Member vars
 	std::vector<Vertex> vertices;
 	std::vector<GLuint> indices;
@@ -48,4 +49,9 @@ public:
 class Cube : public Prefab {
 public:
 	Cube();
+};
+
+class Object :public Prefab {
+public:
+	Object(const char* fileName);
 };

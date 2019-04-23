@@ -28,7 +28,7 @@ Triangle::Triangle() : Prefab() {
 	{
 		//Positions													//texcoords					//Normals
 		glm::vec3(0.f, 0.5f, 0.f),					glm::vec2(0.5f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
-		glm::vec3(-0.5f, -0.5f, 0.f),					glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+		glm::vec3(-0.5f, -0.5f, 0.f),				glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
 		glm::vec3(0.5f, -0.5f, 0.f),				glm::vec2(1.f, 0.f),		glm::vec3(0.f, 0.f, 1.f)
 	};
 	unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
@@ -47,10 +47,10 @@ Triangle::Triangle() : Prefab() {
 Quad::Quad() : Prefab() {
 	Vertex vertices[] =
 	{
-		//Positions								//Colors						//texcoords					//Normals
-		glm::vec3(-0.5f, 0.5f, 0.f),			glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+		//Positions									//texcoords					//Normals
+		glm::vec3(-0.5f, 0.5f, 0.f),				glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
 		glm::vec3(-0.5f, -0.5f, 0.f),				glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-		glm::vec3(0.5f, -0.5f, 0.f),					glm::vec2(1.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+		glm::vec3(0.5f, -0.5f, 0.f),				glm::vec2(1.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
 		glm::vec3(0.5f, 0.5f, 0.f),					glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f)
 	};
 	unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
@@ -70,11 +70,11 @@ Quad::Quad() : Prefab() {
 Plane::Plane() : Prefab() {
 	Vertex vertices[] =
 	{
-		//Positions								//Colors						//texcoords					//Normals
-		glm::vec3(-0.5f, 0.5f, 0.f),					glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),	//0
+		//Positions									//texcoords					//Normals
+		glm::vec3(-0.5f, 0.5f, 0.f),				glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),	//0
 		glm::vec3(-0.5f, -0.5f, 0.f),				glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),	//1
-		glm::vec3(0.5f, -0.5f, 0.f),					glm::vec2(1.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),	//2
-		glm::vec3(0.5f, 0.5f, 0.f),				glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),	//3
+		glm::vec3(0.5f, -0.5f, 0.f),				glm::vec2(1.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),	//2
+		glm::vec3(0.5f, 0.5f, 0.f),					glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),	//3
 
 		glm::vec3(-0.5f, 0.5f, 0.f),				glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, -1.f),	//4
 		glm::vec3(-0.5f, -0.5f, 0.f),				glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, -1.f),	//5
@@ -98,36 +98,36 @@ Cube::Cube() : Prefab() {
 
 	Vertex vertices[] =
 	{
-		//Positions												//texcoords					//Normals
-		glm::vec3(-0.5f, 0.5f, 0.5f),					glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),	//0
+		//Positions									//texcoords					//Normals
+		glm::vec3(-0.5f, 0.5f, 0.5f),				glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),	//0
 		glm::vec3(-0.5f, -0.5f, 0.5f),				glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),	//1		FRONT
 		glm::vec3(0.5f, -0.5f, 0.5f),				glm::vec2(1.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),	//2
-		glm::vec3(0.5f, 0.5f, 0.5f),					glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),	//3
+		glm::vec3(0.5f, 0.5f, 0.5f),				glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),	//3
 
 		glm::vec3(-0.5f, 0.5f, -0.5f),				glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, -1.f),	//4
-		glm::vec3(-0.5f, -0.5f, -0.5f),			glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, -1.f),	//5		BACK
+		glm::vec3(-0.5f, -0.5f, -0.5f),				glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, -1.f),	//5		BACK
 		glm::vec3(0.5f, -0.5f, -0.5f),				glm::vec2(1.f, 0.f),		glm::vec3(0.f, 0.f, -1.f),	//6
-		glm::vec3(0.5f, 0.5f, -0.5f),						glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, -1.f),	//7
+		glm::vec3(0.5f, 0.5f, -0.5f),				glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, -1.f),	//7
 
-		glm::vec3(-0.5f, 0.5f, -0.5f),			glm::vec2(0.f, 1.f),		glm::vec3(-1.f, 0.f, 0.f),	//8
-		glm::vec3(-0.5f, -0.5f, -0.5f),			glm::vec2(0.f, 0.f),		glm::vec3(-1.f, 0.f, 0.f),	//9		LEFT
-		glm::vec3(-0.5f, -0.5f, 0.5f),					glm::vec2(1.f, 0.f),		glm::vec3(-1.f, 0.f, 0.f),	//10
-		glm::vec3(-0.5f, 0.5f, 0.5f),					glm::vec2(1.f, 1.f),		glm::vec3(-1.f, 0.f, 0.f),	//11
+		glm::vec3(-0.5f, 0.5f, -0.5f),				glm::vec2(0.f, 1.f),		glm::vec3(-1.f, 0.f, 0.f),	//8
+		glm::vec3(-0.5f, -0.5f, -0.5f),				glm::vec2(0.f, 0.f),		glm::vec3(-1.f, 0.f, 0.f),	//9		LEFT
+		glm::vec3(-0.5f, -0.5f, 0.5f),				glm::vec2(1.f, 0.f),		glm::vec3(-1.f, 0.f, 0.f),	//10
+		glm::vec3(-0.5f, 0.5f, 0.5f),				glm::vec2(1.f, 1.f),		glm::vec3(-1.f, 0.f, 0.f),	//11
 		
 		glm::vec3(0.5f, 0.5f, -0.5f),				glm::vec2(0.f, 1.f),		glm::vec3(1.f, 0.f, 0.f),	//12
-		glm::vec3(0.5f, -0.5f, -0.5f),					glm::vec2(0.f, 0.f),		glm::vec3(1.f, 0.f, 0.f),	//13	RIGHT
-		glm::vec3(0.5f, -0.5f, 0.5f),					glm::vec2(1.f, 0.f),		glm::vec3(1.f, 0.f, 0.f),	//14
-		glm::vec3(0.5f, 0.5f, 0.5f),						glm::vec2(1.f, 1.f),		glm::vec3(1.f, 0.f, 0.f),	//15
+		glm::vec3(0.5f, -0.5f, -0.5f),				glm::vec2(0.f, 0.f),		glm::vec3(1.f, 0.f, 0.f),	//13	RIGHT
+		glm::vec3(0.5f, -0.5f, 0.5f),				glm::vec2(1.f, 0.f),		glm::vec3(1.f, 0.f, 0.f),	//14
+		glm::vec3(0.5f, 0.5f, 0.5f),				glm::vec2(1.f, 1.f),		glm::vec3(1.f, 0.f, 0.f),	//15
 
 		glm::vec3(-0.5f, 0.5f, -0.5f),				glm::vec2(0.f, 1.f),		glm::vec3(0.f, 1.f, 0.f),	//16
 		glm::vec3(-0.5f, 0.5f, 0.5f),				glm::vec2(0.f, 0.f),		glm::vec3(0.f, 1.f, 0.f),	//17	UP
-		glm::vec3(0.5f, 0.5f, 0.5f),					glm::vec2(1.f, 0.f),		glm::vec3(0.f, 1.f, 0.f),	//18
-		glm::vec3(0.5f, 0.5f, -0.5f),					glm::vec2(1.f, 1.f),		glm::vec3(0.f, 1.f, 0.f),	//19
+		glm::vec3(0.5f, 0.5f, 0.5f),				glm::vec2(1.f, 0.f),		glm::vec3(0.f, 1.f, 0.f),	//18
+		glm::vec3(0.5f, 0.5f, -0.5f),				glm::vec2(1.f, 1.f),		glm::vec3(0.f, 1.f, 0.f),	//19
 
-		glm::vec3(-0.5f, -0.5f, -0.5f),			glm::vec2(0.f, 1.f),		glm::vec3(0.f, -1.f, 0.f),	//20
+		glm::vec3(-0.5f, -0.5f, -0.5f),				glm::vec2(0.f, 1.f),		glm::vec3(0.f, -1.f, 0.f),	//20
 		glm::vec3(-0.5f, -0.5f, 0.5f),				glm::vec2(0.f, 0.f),		glm::vec3(0.f, -1.f, 0.f),	//21	DOWN
 		glm::vec3(0.5f, -0.5f, 0.5f),				glm::vec2(1.f, 0.f),		glm::vec3(0.f, -1.f, 0.f),	//22
-		glm::vec3(0.5f, -0.5f, -0.5f),					glm::vec2(1.f, 1.f),		glm::vec3(0.f, -1.f, 0.f)	//23
+		glm::vec3(0.5f, -0.5f, -0.5f),				glm::vec2(1.f, 1.f),		glm::vec3(0.f, -1.f, 0.f)	//23
 		//Usunac powtarzajace sie vertices!
 	};
 	unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
@@ -144,4 +144,44 @@ Cube::Cube() : Prefab() {
 	unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
 
 	this->set(vertices, nrOfVertices, indices, nrOfIndices);
+}
+
+Object::Object(const char* fileName)
+{
+	std::ifstream in(fileName, std::ios::in);
+	std::vector<glm::vec3> positions;
+	if (!in)
+	{
+		std::cerr << "Cannot open " << fileName << std::endl;
+		exit(1);
+	}
+	std::string line;
+	while (std::getline(in, line))
+	{
+		//check v for vertices
+		if (line.substr(0, 2) == "v ") {
+			std::istringstream v(line.substr(2));
+			glm::vec3 vert;
+			double x, y, z;
+			v >> x; v >> y; v >> z;
+			vert = glm::vec3(x, y, z);
+			positions.push_back(vert);
+		}
+		////check for faces
+		//else if (line.substr(0, 2) == "f ") {
+		//	int a, b, c; //to store mesh index
+		//	std::istringstream v(line.substr(2));
+		//	v >> a; v >> b; v >> c;
+		//	indices.push_back(a);
+		//	indices.push_back(b);
+		//	indices.push_back(c);
+		//}
+	}
+	for (size_t i = 0; i < positions.size(); i++) {
+		Vertex vert;
+		vert.position = positions[i];
+		vert.texcoord = glm::vec2(rand()%1, rand()%1);
+		vert.normal = glm::vec3(0.f,0.f,1.f);
+		vertices.push_back(vert);
+	}
 }

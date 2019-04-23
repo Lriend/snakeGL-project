@@ -169,3 +169,4 @@ void Mesh::render(Shader* shader){
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+
