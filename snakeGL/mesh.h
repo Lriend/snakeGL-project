@@ -39,6 +39,7 @@ public:
 
 	//Getters
 	glm::vec3 getPosition();
+	glm::vec3 getRotation();
 
 	//Setters
 	void setPosition(const glm::vec3 position);

@@ -25,6 +25,11 @@ public:
 
 	//Functions
 	void rotate(const glm::vec3 rotation);
+	void move(const glm::vec3 move);
+	glm::vec3 getOrigin();
+	void setOrigin(glm::vec3 origin);
+
+	float getRotationAtZ(int meshesID);
 
 	void update();
 	void render(Shader* shader);

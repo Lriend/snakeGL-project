@@ -27,6 +27,27 @@ void Model::rotate(const glm::vec3 rotation)
 	for (auto& i : this->meshes) i->rotate(rotation);
 }
 
+void Model::move(const glm::vec3 move)
+{
+	for (auto& i : this->meshes) i->move(move);
+}
+
+glm::vec3 Model::getOrigin()
+{
+	return this->origin;
+}
+
+void Model::setOrigin(glm::vec3 origin)
+{
+	this->origin = origin;
+	if (!meshes.empty()) meshes[0]->setPosition(origin);
+}
+
+float Model::getRotationAtZ(int meshesID)
+{
+	return meshes[meshesID]->getRotation().z;
+}
+
 //Functions
 void Model::update()
 {

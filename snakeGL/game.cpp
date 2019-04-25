@@ -89,6 +89,10 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("Textures/starCube.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/field.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/tailtemptex.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Textures/straight.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Textures/toRight.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Textures/toLeft.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Textures/end.png", GL_TEXTURE_2D));
 	//this->textures.push_back(new Texture("Textures/tailtrantemptex.png", GL_TEXTURE_2D));
 }
 
@@ -99,13 +103,7 @@ void Game::initMaterials()
 
 void Game::initModels()
 {
-	//this->meshes.push_back(new Mesh(&Cube(), glm::vec3(-9.f, 4.f, -9.75f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f))); //Snake's head prefab
-	//this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.f, 0.f, -10.f), glm::vec3(0.f), glm::vec3(20.f, 10.f, 1.f))); //Board prefab
-
-	//this->meshes.push_back(new Mesh(&Plane(), glm::vec3(-3.f, 0.f, -9.75f / 3))); //Fruit prefab
-	//this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[CHERRY], this->textures[CHERRY], this->meshes));
-	//for (auto*&i : this->meshes) delete i;
-	//this->meshes.clear();
+	
 
 	this->meshes.push_back(new Mesh(&Object("Objects/nMonkey.obj"), glm::vec3(0.f, 0.f, -5.f)));
 	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[STAR_CUBE], this->textures[STAR_CUBE], this->meshes));
@@ -133,8 +131,12 @@ void Game::initHead() {
 void Game::initFruits()
 {
 	std::srand((unsigned int)time(NULL));
-	for (int i = 0; i < this->amountOfFruits; i++)
-		this->fruits.push_back(new Mesh(&Plane(), glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -9.75f)));
+	for (int i = 0; i < this->amountOfFruits; i++) {
+		this->meshes.push_back(new Mesh(&Plane(), glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -9.75f)));
+		this->fruits.push_back(new Model(meshes.empty()?glm::vec3(0.f):meshes[0]->getPosition(), this->materials[0], this->textures[CHERRY], this->textures[CHERRY], this->meshes));
+		for (auto*&i : this->meshes) delete i;
+		this->meshes.clear();
+	}
 }
 
 void Game::initUniforms()
@@ -174,7 +176,7 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->frameBufferHeight = this->WINDOW_HEIGHT;
 	this->frameBufferWidth = this->WINDOW_WIDTH;
 
-	this->camPosition = glm::vec3(0.f, 0.f, 1.f);
+	this->camPosition = glm::vec3(0.f, 0.f, boardWidth>boardHeight?(float)boardWidth/2-9:(float)boardHeight/2-9);
 	this->worldUp = glm::vec3(0.f, 1.f, 0.f);
 	this->camFront = glm::vec3(0.f, 0.f, -1.f);
 
@@ -267,7 +269,7 @@ void Game::render()
 
 	//Update uniforms
 	this->updateUniforms();
-	this->materials[MATERIAL1]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
+	//this->materials[MATERIAL1]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
 
 	//Use a program
 	this->shaders[SHADER_CORE_PROGRAM]->use();
@@ -306,16 +308,13 @@ void Game::drawBoard()
 void Game::drawSnake()
 {
 	//STAR CUBE same ting
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	this->textures[STAR_CUBE]->bind(DIFFUSE_TEX);
 	this->textures[STAR_CUBE]->bind(SPECULAR_TEX); //Do podmiany tekstura specular
 	this->head->render(this->shaders[SHADER_CORE_PROGRAM]);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	this->textures[TAIL_RGB]->bind(DIFFUSE_TEX);
-	this->textures[TAIL_RGB]->bind(SPECULAR_TEX); //Do podmiany tekstura specular
-	for (size_t i = 0; i < this->tail.size(); i++)
+	for (size_t i = 0; i < this->tail.size(); i++) {
 		this->tail[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	}
 }
 
 void Game::drawFruits()
@@ -333,22 +332,64 @@ void Game::moveSnake()
 	if (!gameOver)
 	switch (this->direction)
 	{
-	case UP: this->head->move(glm::vec3(0.f, 1.f, 0.f)); break;
-	case DOWN: this->head->move(glm::vec3(0.f, -1.f, 0.f)); break;
-	case LEFT: this->head->move(glm::vec3(-1.f, 0.f, 0.f)); break;
-	case RIGHT: this->head->move(glm::vec3(1.f, 0.f, 0.f)); break;
+	case UP: this->head->move(glm::vec3(0.f, 1.f, 0.f)); this->head->setRotation(glm::vec3(0.f, 90.f, 90.f)); break;
+	case DOWN: this->head->move(glm::vec3(0.f, -1.f, 0.f)); this->head->setRotation(glm::vec3(0.f, 90.f, 270.f)); break;
+	case LEFT: this->head->move(glm::vec3(-1.f, 0.f, 0.f)); this->head->setRotation(glm::vec3(90.f, 0.f, 180.f)); break;
+	case RIGHT: this->head->move(glm::vec3(1.f, 0.f, 0.f)); this->head->setRotation(glm::vec3(90.f, 0.f, 0.f)); break;
 	}
 }
 
 void Game::moveTail()
 {
-	this->tail.push_back(new Mesh(&Cube(), glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -9.75f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f)));
-	tail.pop_front();
+	this->growTail();
+	this->tail.pop_front();
+	glm::vec3 backPosTemp = this->tail.front()->getOrigin();
+	float textureRotation = this->tail.front()->getRotationAtZ(0);
+	this->tail.pop_front();
+	this->meshes.push_back(new Mesh(&Cube(), backPosTemp, glm::vec3(0.f, 0.f, textureRotation), glm::vec3(1.f, 1.f, 0.5f)));
+	this->tail.push_front(new Model(backPosTemp, this->materials[0], this->textures[TAIL_END], this->textures[TAIL_END], this->meshes));
+	for (auto*&i : this->meshes) delete i;
+	this->meshes.clear();
 }
 
 void Game::growTail()
 {
-	this->tail.push_back(new Mesh(&Cube(), glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -9.75f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f)));
+	int texture;
+	float textureRotation;
+	switch (this->direction) {
+	case UP:
+		textureRotation = 90.f;
+		break;
+	case DOWN:
+		textureRotation = 270.f;
+		break;
+	case LEFT:
+		textureRotation = 180.f;
+		break;
+	case RIGHT:
+		textureRotation = 0.f;
+		break;
+	}
+	glm::vec3 headPosTemp = this->head->getPosition();
+	if (!this->tail.empty()) {
+		if (
+			(this->tail.back()->getOrigin() == glm::vec3(headPosTemp.x - 1.f, headPosTemp.y, -9.75f) && this->direction == RIGHT)
+			|| (this->tail.back()->getOrigin() == glm::vec3(headPosTemp.x + 1.f, headPosTemp.y, -9.75f) && this->direction == LEFT)
+			|| (this->tail.back()->getOrigin() == glm::vec3(headPosTemp.x, headPosTemp.y - 1.f, -9.75f) && this->direction == UP)
+			|| (this->tail.back()->getOrigin() == glm::vec3(headPosTemp.x, headPosTemp.y + 1.f, -9.75f) && this->direction == DOWN)
+			) texture = TAIL_STRAIGHT;
+		else if (
+			(this->tail.back()->getOrigin() == glm::vec3(headPosTemp.x - 1.f, headPosTemp.y, -9.75f) && this->direction == UP)
+			|| (this->tail.back()->getOrigin() == glm::vec3(headPosTemp.x + 1.f, headPosTemp.y, -9.75f) && this->direction == DOWN)
+			|| (this->tail.back()->getOrigin() == glm::vec3(headPosTemp.x, headPosTemp.y - 1.f, -9.75f) && this->direction == LEFT)
+			|| (this->tail.back()->getOrigin() == glm::vec3(headPosTemp.x, headPosTemp.y + 1.f, -9.75f) && this->direction == RIGHT)
+			) texture = TAIL_TOLEFT;
+		else texture = TAIL_TORIGHT;
+	}
+	this->meshes.push_back(new Mesh(&Cube(), glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -9.75f), glm::vec3(0.f, 0.f, textureRotation), glm::vec3(1.f, 1.f, 0.5f)));
+	this->tail.push_back(new Model(glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -9.75f), this->materials[0], this->textures[this->tail.empty()?TAIL_STRAIGHT:texture], this->textures[this->tail.empty()?TAIL_STRAIGHT:texture], this->meshes));
+	for (auto*&i : this->meshes) delete i;
+	this->meshes.clear();
 	this->shouldGrow = false;
 }
 
@@ -356,23 +397,23 @@ void Game::updateFruits()
 {
 	for (size_t i = 0; i < this->fruits.size(); i++) {
 		bool getOutOfHere = false;
-		while (this->fruits[i]->getPosition() == this->head->getPosition() || getOutOfHere) {
+		while (this->fruits[i]->getOrigin() == this->head->getPosition() || getOutOfHere) {
 			getOutOfHere = false;
 			if (tail.size() == board.size() - amountOfFruits) { amountOfFruits--;  return; }
 			this->shouldGrow = true;
-			this->fruits[i]->setPosition(glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -9.75f));
-			for (size_t j = 0; j < this->tail.size(); j++) if (this->tail[j]->getPosition() == this->fruits[i]->getPosition()) getOutOfHere = true;
-			for (size_t j = 0; j < this->fruits.size(); j++) if (this->fruits[j]->getPosition() == this->fruits[i]->getPosition() && i!=j) getOutOfHere = true;
+			this->fruits[i]->setOrigin(glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -9.75f));
+			for (size_t j = 0; j < this->tail.size(); j++) if (this->tail[j]->getOrigin() == this->fruits[i]->getOrigin()) getOutOfHere = true;
+			for (size_t j = 0; j < this->fruits.size(); j++) if (this->fruits[j]->getOrigin() == this->fruits[i]->getOrigin() && i!=j) getOutOfHere = true;
 		}
 	}
 }
 
 void Game::updateDirection()
 {
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && tail.back()->getPosition().y <= head->getPosition().y) this->direction = UP;
-	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && tail.back()->getPosition().y >= head->getPosition().y) this->direction = DOWN;
-	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && tail.back()->getPosition().x >= head->getPosition().x) this->direction = LEFT;
-	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && tail.back()->getPosition().x <= head->getPosition().x) this->direction = RIGHT;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && tail.back()->getOrigin().y <= head->getPosition().y) this->direction = UP;
+	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && tail.back()->getOrigin().y >= head->getPosition().y) this->direction = DOWN;
+	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && tail.back()->getOrigin().x >= head->getPosition().x) this->direction = LEFT;
+	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && tail.back()->getOrigin().x <= head->getPosition().x) this->direction = RIGHT;
 }
 
 void Game::updateGameOver()
@@ -383,7 +424,7 @@ void Game::updateGameOver()
 		|| this->head->getPosition().x < this->boardPos.x
 		|| this->head->getPosition().x > this->boardPos.x + this->boardWidth
 		) gameOver = true;
-	for (size_t i = 0; i < tail.size(); i++) if (tail[i]->getPosition() == head->getPosition()) gameOver = true;
+	for (size_t i = 0; i < tail.size(); i++) if (tail[i]->getOrigin() == head->getPosition()) gameOver = true;
 }
 
 void Game::updateMouseInput()

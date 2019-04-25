@@ -4,10 +4,8 @@
 
 //ENUMS
 enum SHADER{SHADER_CORE_PROGRAM};
-enum TEXTURE{COLORFULL, CHERRY, STAR_CUBE, FIELD, TAIL_RGB};
-enum MATERIAL{MATERIAL1};
+enum TEXTURE{COLORFULL, CHERRY, STAR_CUBE, FIELD, TAIL_RGB, TAIL_STRAIGHT, TAIL_TORIGHT, TAIL_TOLEFT, TAIL_END};
 enum MESH{MESH_PLANE, MESH_CUBE, MESH_FIELD};
-//enum TEXTURE_UNITS{DIFFUSE_TEX, SPECULAR_TEX};
 enum DIRECTION{UP, DOWN, LEFT, RIGHT};
 
 class Game
@@ -76,14 +74,14 @@ class Game
 	
 	//Snake
 	Mesh* head;
-	std::deque<Mesh*> tail;
+	std::deque<Model*> tail;
 	int direction;
 	bool shouldGrow;
 	bool gameOver;
 
 	//Fruits
 	int amountOfFruits;
-	std::vector<Mesh*> fruits;
+	std::vector<Model*> fruits;
 
 //Private functions
 	void initGLFW();

@@ -123,6 +123,11 @@ glm::vec3 Mesh::getPosition()
 	return position;
 }
 
+glm::vec3 Mesh::getRotation()
+{
+	return rotation;
+}
+
 //Setters
 void Mesh::setPosition(const glm::vec3 position) {
 	this->position = position;
