@@ -187,7 +187,7 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->initGLFW();
 	this->initWindow(title, resizable);
 	this->initGLEW();
-	this->initOpenGLOptions(GL_LINE, false);
+	this->initOpenGLOptions(GL_LINE);
 	this->initMatrices();
 	this->initShaders();
 	this->initTextures();
