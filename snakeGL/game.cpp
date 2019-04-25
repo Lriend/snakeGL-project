@@ -93,6 +93,7 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("Textures/toRight.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/toLeft.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/end.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Textures/brown.png", GL_TEXTURE_2D));
 	//this->textures.push_back(new Texture("Textures/tailtrantemptex.png", GL_TEXTURE_2D));
 }
 
@@ -106,7 +107,7 @@ void Game::initModels()
 	
 
 	this->meshes.push_back(new Mesh(&Object("Objects/nMonkey.obj"), glm::vec3(0.f, 0.f, -5.f)));
-	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[STAR_CUBE], this->textures[STAR_CUBE], this->meshes));
+	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[BROWN], this->textures[BROWN], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 }
