@@ -14,10 +14,11 @@ void Game::initWindow(const char* title, bool resizable) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, this->GL_VERSION_MAJOR);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, this->GL_VERSION_MINOR);
 	glfwWindowHint(GLFW_RESIZABLE, resizable);
+	glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
 
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // For Mac (redundand)
 
-	this->window = glfwCreateWindow(this->WINDOW_WIDTH, this->WINDOW_HEIGHT, title, glfwGetPrimaryMonitor(), NULL);
+	this->window = glfwCreateWindow(this->WINDOW_WIDTH, this->WINDOW_HEIGHT, title, resizable?NULL:glfwGetPrimaryMonitor(), NULL);
 
 	if (this->window == nullptr) {
 		std::cout << "ERROR! GAME.CPP/INITWINDOW : WINDOW_INIT_FAILED" << std::endl;
@@ -63,7 +64,7 @@ void Game::initOpenGLOptions(GLenum fillOrLine, bool culling, bool blend)
 
 	glPolygonMode(GL_FRONT_AND_BACK, fillOrLine); //Could be GL_LINE as well as GL_FILL (then will draw only outlines)
 
-	glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
 void Game::initMatrices()
@@ -100,12 +101,13 @@ void Game::initModels()
 {
 	//this->meshes.push_back(new Mesh(&Cube(), glm::vec3(-9.f, 4.f, -9.75f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f))); //Snake's head prefab
 	//this->meshes.push_back(new Mesh(&Quad(), glm::vec3(0.f, 0.f, -10.f), glm::vec3(0.f), glm::vec3(20.f, 10.f, 1.f))); //Board prefab
-	this->meshes.push_back(new Mesh(&Plane(), glm::vec3(-3.f, 0.f, -9.75f / 3))); //Fruit prefab
-	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[CHERRY], this->textures[CHERRY], this->meshes));
-	for (auto*&i : this->meshes) delete i;
-	this->meshes.clear();
 
-	this->meshes.push_back(new Mesh(&Object("Objects/untitledWithNormals.obj"), glm::vec3(0.f, 0.f, -5.f)));
+	//this->meshes.push_back(new Mesh(&Plane(), glm::vec3(-3.f, 0.f, -9.75f / 3))); //Fruit prefab
+	//this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[CHERRY], this->textures[CHERRY], this->meshes));
+	//for (auto*&i : this->meshes) delete i;
+	//this->meshes.clear();
+
+	this->meshes.push_back(new Mesh(&Object("Objects/nMonkey.obj"), glm::vec3(0.f, 0.f, -5.f)));
 	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[STAR_CUBE], this->textures[STAR_CUBE], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
@@ -199,6 +201,7 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->initHead();
 	this->growTail();
 	this->initFruits();
+	
 }
 
 Game::~Game()
@@ -275,9 +278,6 @@ void Game::render()
 	drawFruits();
 
 	//Object from file attempt
-	this->models[1]->render(this->shaders[SHADER_CORE_PROGRAM]);
-
-	//MODEL CLASS ATTEMPT
 	this->models[0]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 	//End Draw
