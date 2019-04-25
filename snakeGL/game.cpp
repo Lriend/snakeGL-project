@@ -105,7 +105,7 @@ void Game::initModels()
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 
-	this->meshes.push_back(new Mesh(&Object("Objects/untitled.obj"), glm::vec3(0.f, 0.f, -5.f)));
+	this->meshes.push_back(new Mesh(&Object("Objects/untitledWithNormals.obj"), glm::vec3(0.f, 0.f, -5.f)));
 	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[STAR_CUBE], this->textures[STAR_CUBE], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
@@ -187,7 +187,7 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->initGLFW();
 	this->initWindow(title, resizable);
 	this->initGLEW();
-	this->initOpenGLOptions(GL_LINE);
+	this->initOpenGLOptions(GL_FILL, false);
 	this->initMatrices();
 	this->initShaders();
 	this->initTextures();
@@ -300,7 +300,7 @@ void Game::drawBoard()
 	this->textures[FIELD]->bind(SPECULAR_TEX); //Do podmiany tekstura specular
 	for (size_t i = 0; i < this->board.size(); i++)
 		this->board[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void Game::drawSnake()

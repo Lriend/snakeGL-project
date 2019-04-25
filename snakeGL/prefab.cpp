@@ -150,6 +150,7 @@ Object::Object(const char* fileName)
 {
 	std::ifstream in(fileName, std::ios::in);
 	std::vector<glm::vec3> positions;
+	std::vector<glm::vec3> normals;
 	if (!in)
 	{
 		std::cerr << "Cannot open " << fileName << std::endl;
@@ -161,11 +162,17 @@ Object::Object(const char* fileName)
 		//check v for vertices
 		if (line.substr(0, 2) == "v ") {
 			std::istringstream v(line.substr(2));
-			glm::vec3 vert;
-			double x, y, z;
+			glm::vec3 vert; double x, y, z;
 			v >> x; v >> y; v >> z;
 			vert = glm::vec3(x, y, z);
 			positions.push_back(vert);
+		}
+		else if (line.substr(0, 3) == "vn ") {
+			std::istringstream v(line.substr(3));
+			glm::vec3 vert;	double x, y, z;
+			v >> x; v >> y; v >> z;
+			vert = glm::vec3(x, y, z);
+			normals.push_back(vert);
 		}
 		////check for faces
 		//else if (line.substr(0, 2) == "f ") {
@@ -181,7 +188,7 @@ Object::Object(const char* fileName)
 		Vertex vert;
 		vert.position = positions[i];
 		vert.texcoord = glm::vec2(rand()%1, rand()%1);
-		vert.normal = glm::vec3(0.f,0.f,1.f);
+		vert.normal = normals[i/3];
 		vertices.push_back(vert);
 	}
 }
