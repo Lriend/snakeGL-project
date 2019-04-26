@@ -14,3 +14,9 @@ Wykorzystane biblioteki zewnetrzne:
 
 Snake model concept:
 ![](snookConcept.png)
+
+Current game state of preparation:
+![](currentGameState.png)
+
+I hate C++, my dudes, but i will finish this one project. I guess...
+![](https://i.kym-cdn.com/entries/icons/original/000/028/021/work.jpg)
