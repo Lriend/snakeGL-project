@@ -26,6 +26,8 @@ class Game
 	float deltaTime;
 	float curTime;
 	float lastTime;
+	float freezeFor;
+	float weNeedANewPlague;
 
 	//Mouse Input
 	double lastMouseX;

@@ -188,6 +188,8 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->deltaTime = 0.f;
 	this->curTime = 0.f;
 	this->lastTime = 0.f;
+	this->weNeedANewPlague = 0.f;
+	this->freezeFor = 0.15f;
 
 	this->initGLFW();
 	this->initWindow(title, resizable);
@@ -203,6 +205,7 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->initBoard(this->boardWidth, this->boardHeight);
 	this->initHead();
 	this->growTail();
+	this->moveSnake();
 	this->initFruits();
 	
 }
@@ -249,12 +252,14 @@ void Game::update()
 	updateDirection();
 
 	//UPDATE GAME
-	if (!gameOver)
-		if (shouldGrow) growTail();
-		else moveTail();
-	moveSnake();
-	updateFruits();
-
+	if (this->weNeedANewPlague > this->freezeFor) {
+		if (!gameOver)
+			if (shouldGrow) growTail();
+			else moveTail();
+		moveSnake();
+		updateFruits();
+		this->weNeedANewPlague = 0;
+	}this->weNeedANewPlague += this->deltaTime;
 	//Rotate fruits
 	//for (size_t i = 0; i < this->fruits.size(); i++)	this->fruits[i]->rotate(glm::vec3(0.f, 5.f, 0.f)*this->deltaTime);
 	this->models[0]->rotate(glm::vec3(0.f, 5.f, 0.f)/**this->deltaTime*/);
@@ -274,7 +279,6 @@ void Game::render()
 
 	//Use a program
 	this->shaders[SHADER_CORE_PROGRAM]->use();
-
 	//Activate textures and draw stuff
 	drawBoard();
 	drawSnake();
@@ -293,7 +297,6 @@ void Game::render()
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	Sleep(150);
 }
 
 void Game::drawBoard()
@@ -411,10 +414,10 @@ void Game::updateFruits()
 
 void Game::updateDirection()
 {
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && tail.back()->getOrigin().y <= head->getPosition().y) this->direction = UP;
-	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && tail.back()->getOrigin().y >= head->getPosition().y) this->direction = DOWN;
-	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && tail.back()->getOrigin().x >= head->getPosition().x) this->direction = LEFT;
-	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && tail.back()->getOrigin().x <= head->getPosition().x) this->direction = RIGHT;
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && tail.back()->getOrigin().y <= head->getPosition().y) this->direction = UP;
+		else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && tail.back()->getOrigin().y >= head->getPosition().y) this->direction = DOWN;
+		else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && tail.back()->getOrigin().x >= head->getPosition().x) this->direction = LEFT;
+		else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && tail.back()->getOrigin().x <= head->getPosition().x) this->direction = RIGHT;
 }
 
 void Game::updateGameOver()
@@ -467,7 +470,6 @@ void Game::updateInput(GLFWwindow* window, Mesh& mesh) {
 	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) mesh.move(glm::vec3(0.f, -1.f, 0.f));
 	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) mesh.move(glm::vec3(-1.f, 0.f, 0.f));
 	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) mesh.move(glm::vec3(1.f, 0.f, 0.f));
-	Sleep(100);
 	//PRZEROBIC NA ASYNC BO WSTYD XD
 
 	//if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) mesh.rotate(glm::vec3(0.1f, 0.f, 0.f));
