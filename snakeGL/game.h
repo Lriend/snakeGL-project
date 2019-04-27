@@ -85,6 +85,12 @@ class Game
 	int amountOfFruits;
 	std::vector<Model*> fruits;
 
+	//Objects
+	std::vector<Object*> objects;
+
+	//Pause
+	bool pause;
+
 //Private functions
 	void initGLFW();
 	void initWindow(const char* title, bool resizable);
@@ -94,6 +100,7 @@ class Game
 	void initShaders();
 	void initTextures();
 	void initMaterials();
+	void initObjects();
 	void initModels();
 	void initLights();
 	void initBoard(int width, int height);
@@ -132,6 +139,7 @@ public:
 	void updateGameOver();
 
 	void updateMouseInput();
+	void updateKeyboardInput();
 	void updateDeltaTime();
 
 //Static functions
