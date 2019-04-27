@@ -113,8 +113,12 @@ void Game::initObjects()
 
 void Game::initModels()
 {
-	this->meshes.push_back(new Mesh(&Object("Objects/nMonkey.obj"), glm::vec3(0.f, 0.f, -5.f)));
+	this->meshes.push_back(new Mesh(&Object("Objects/nMonkey.obj"), glm::vec3((float)boardWidth / 2 + 2.5f, -(float)boardHeight / 2 + 4, -10.f)));
 	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[BROWN], this->textures[BROWN], this->meshes));
+	for (auto*&i : this->meshes) delete i;
+	this->meshes.clear();
+	this->meshes.push_back(new Mesh(&Object("Objects/snakeGL.obj"), glm::vec3((float)boardWidth / 2 + 1.f, -(float)boardHeight / 2 +1.f, -10.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f)));
+	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[STAR_CUBE], this->textures[BROWN], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 }
@@ -297,6 +301,7 @@ void Game::render()
 
 	//Object from file attempt Monkey
 	this->models[0]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	this->models[1]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 	//End Draw
 	glfwSwapBuffers(this->window); //Swap frames
