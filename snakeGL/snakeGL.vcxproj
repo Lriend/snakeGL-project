@@ -134,7 +134,6 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="material.cpp" />
-    <ClCompile Include="menu.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="prefab.cpp" />
@@ -145,7 +144,6 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="libraries.h" />
     <ClInclude Include="material.h" />
-    <ClInclude Include="menu.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="prefab.h" />

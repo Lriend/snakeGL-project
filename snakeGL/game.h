@@ -4,9 +4,10 @@
 
 //ENUMS
 enum SHADER{SHADER_CORE_PROGRAM};
-enum TEXTURE{COLORFULL, CHERRY, STAR_CUBE, FIELD, TAIL_RGB, TAIL_STRAIGHT, TAIL_TORIGHT, TAIL_TOLEFT, TAIL_END, BROWN};
+enum TEXTURE{COLORFULL, CHERRY, STAR_CUBE, FIELD, TAIL_RGB, TAIL_STRAIGHT, TAIL_TORIGHT, TAIL_TOLEFT, TAIL_END, BROWN, RED};
 enum MESH{MESH_PLANE, MESH_CUBE, MESH_FIELD};
 enum DIRECTION{UP, DOWN, LEFT, RIGHT};
+enum GAME_STATE{MENU, FAST_GAME, CUSTOM_GAME};
 
 class Game
 {
@@ -80,6 +81,8 @@ class Game
 	int direction;
 	bool shouldGrow;
 	bool gameOver;
+	float speed;
+	float tick;
 
 	//Fruits
 	int amountOfFruits;
@@ -88,8 +91,9 @@ class Game
 	//Objects
 	std::vector<Object*> objects;
 
-	//Pause
+	//Manager
 	bool pause;
+	GAME_STATE state;
 
 //Private functions
 	void initGLFW();
@@ -100,20 +104,25 @@ class Game
 	void initShaders();
 	void initTextures();
 	void initMaterials();
+
+	//initState
+	void init(GAME_STATE state);
 	void initObjects();
 	void initModels();
-	void initLights();
 	void initBoard(int width, int height);
-	void initUniforms();
 	void initHead();
 	void initFruits();
+
+
+	void initLights();
+	void initUniforms();
 
 	void updateUniforms();
 //Static vars
 
 public:
 //Ctor & dtor
-	Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable, int boardWidth, int boardHeight, int amountOfFruits);
+	Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable);
 	virtual ~Game();
 
 //Getters
@@ -125,19 +134,25 @@ public:
 //Functions
 	void update();
 	void render();
-
-	void drawBoard();
-	void drawSnake();
-	void drawFruits();
-
-	void moveSnake();
-	void moveTail();
-	void growTail();
-
+//Snake
+//Update update
 	void updateFruits();
 	void updateDirection();
 	void updateGameOver();
 
+//Update render
+	void moveSnake();
+	void moveTail();
+	void growTail();
+
+//MENU
+
+//Render
+	void drawBoard();
+	void drawSnake();
+	void drawFruits();
+
+//Update input
 	void updateMouseInput();
 	void updateKeyboardInput();
 	void updateDeltaTime();

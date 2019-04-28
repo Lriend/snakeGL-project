@@ -94,12 +94,31 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("Textures/toLeft.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/end.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/brown.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Textures/red.png", GL_TEXTURE_2D));
 	//this->textures.push_back(new Texture("Textures/tailtrantemptex.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
 {
 	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), DIFFUSE_TEX, SPECULAR_TEX));
+}
+
+void Game::init(GAME_STATE state)
+{
+	switch (state) {
+	case FAST_GAME:
+		this->boardWidth = 4;
+		this->boardHeight = 4;
+		this->camPosition = glm::vec3(0.f, 0.f, boardWidth > boardHeight ? (float)boardWidth / 2 - 9 : (float)boardHeight / 2 - 9); //set Cam position
+		this->initMatrices(); //Cam position updated in matrices
+
+		this->initObjects();
+		this->initModels();
+		this->initBoard(this->boardWidth, this->boardHeight);
+		this->initHead();
+		this->initFruits();
+		break;
+	}
 }
 
 void Game::initObjects()
@@ -109,6 +128,12 @@ void Game::initObjects()
 	this->objects.push_back(new Object("Objects/cornerToRightFR.obj"));
 	this->objects.push_back(new Object("Objects/endFR.obj"));
 	this->objects.push_back(new Object("Objects/headBG.obj"));
+	//this->objects.push_back(new Object("Objects/cherry.obj"));
+	//this->objects.push_back(new Object("Objects/bunny.obj"));
+	//this->objects.push_back(new Object("Objects/shroom.obj"));
+	//this->objects.push_back(new Object("Objects/turtle2.obj"));
+	this->objects.push_back(new Object("Objects/question.obj"));
+	//this->objects.push_back(new Object("Objects/bomb.obj"));
 }
 
 void Game::initModels()
@@ -123,10 +148,6 @@ void Game::initModels()
 	this->meshes.clear();
 }
 
-void Game::initLights()
-{
-	this->lights.push_back(new glm::vec3(0.f, 0.f, 1.f));
-}
 
 void Game::initBoard(int width, int height)
 {
@@ -144,11 +165,16 @@ void Game::initFruits()
 {
 	std::srand((unsigned int)time(NULL));
 	for (int i = 0; i < this->amountOfFruits; i++) {
-		this->meshes.push_back(new Mesh(&Plane(), glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -10.f)));
-		this->fruits.push_back(new Model(meshes.empty()?glm::vec3(0.f):meshes[0]->getPosition(), this->materials[0], this->textures[CHERRY], this->textures[CHERRY], this->meshes));
+		this->meshes.push_back(new Mesh(objects[5], glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -10.f)));
+		this->fruits.push_back(new Model(meshes.empty()?glm::vec3(0.f):meshes[0]->getPosition(), this->materials[0], this->textures[RED], this->textures[RED], this->meshes));
 		for (auto*&i : this->meshes) delete i;
 		this->meshes.clear();
 	}
+}
+
+void Game::initLights()
+{
+	this->lights.push_back(new glm::vec3(0.f, 0.f, 1.f));
 }
 
 void Game::initUniforms()
@@ -171,17 +197,22 @@ void Game::updateUniforms()
 }
 
 //Ctor & dtor
-Game::Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable, int boardWidth, int boardHeight, int amountOfFruits)
+Game::Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable)
 	: WINDOW_WIDTH(width), WINDOW_HEIGHT(height), GL_VERSION_MAJOR(glMajorVer), GL_VERSION_MINOR(glMinorVer)
 {
 	//Init vars
-	this->boardWidth = boardWidth;
-	this->boardHeight = boardHeight;
+	this->state = FAST_GAME;
 
-	this->amountOfFruits = amountOfFruits;
+	this->boardWidth = 30;
+	this->boardHeight = 20;
 
+	this->amountOfFruits = 3;
+
+	this->tick = 0.5f;
+	this->speed = 1.f;
 	this->direction = RIGHT;
 	this->shouldGrow = true;
+
 	this->gameOver = false;
 	this->pause = false;
 
@@ -201,7 +232,6 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->curTime = 0.f;
 	this->lastTime = 0.f;
 	this->weNeedANewPlague = 0.f;
-	this->freezeFor = 0.25f; //Speed
 
 	this->initGLFW();
 	this->initWindow(title, resizable);
@@ -211,14 +241,12 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->initShaders();
 	this->initTextures();
 	this->initMaterials();
-	this->initObjects();
-	this->initModels();
+
+	//initState
+	this->init(state);
+
 	this->initLights();
 	this->initUniforms();
-	this->initBoard(this->boardWidth, this->boardHeight);
-	this->initHead();
-	this->initFruits();
-	
 }
 
 Game::~Game()
@@ -229,10 +257,10 @@ Game::~Game()
 	for (size_t i = 0; i < this->textures.size(); i++) delete this->textures[i];
 	for (size_t i = 0; i < this->materials.size(); i++) delete this->materials[i];
 	for (auto*&i : this->models) delete i;
+	for (auto*&i : this->board) delete i;
+	for (auto*&i : this->tail) delete i;
+	for (auto*&i : this->fruits) delete i;
 	for (size_t i = 0; i < this->lights.size(); i++) delete this->lights[i];
-	for (size_t i = 0; i < this->board.size(); i++) delete this->board[i];
-	for (size_t i = 0; i < this->tail.size(); i++) delete this->tail[i];
-	for (size_t i = 0; i < this->fruits.size(); i++) delete this->fruits[i];
 }
 
 //Getters
@@ -263,15 +291,14 @@ void Game::update()
 	if (!pause) {
 		//UPDATE GAME INPUT
 		updateDirection();
-
 		updateGameOver();
+		this->freezeFor = this->tick/speed; //Speed
 		//UPDATE GAME
-		if (this->weNeedANewPlague >= this->freezeFor) {
-			if (!gameOver)
-				if (shouldGrow) growTail();
-				else moveTail();
-			moveSnake();
+		if (this->weNeedANewPlague >= this->freezeFor && !gameOver) {
 			updateFruits();
+			if (shouldGrow) growTail();
+			else moveTail();
+			moveSnake();
 			this->weNeedANewPlague = 0;
 		}
 		else this->weNeedANewPlague += this->deltaTime;
@@ -340,8 +367,6 @@ void Game::drawSnake()
 void Game::drawFruits()
 {
 	//CHERRY PLANE yes.
-	this->textures[CHERRY]->bind(DIFFUSE_TEX);
-	this->textures[CHERRY]->bind(SPECULAR_TEX); //Do podmiany tekstura specular
 	for (size_t i = 0; i < this->fruits.size(); i++)
 		this->fruits[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
@@ -408,7 +433,7 @@ void Game::growTail()
 			) texture = TAIL_TOLEFT;
 		else texture = TAIL_TORIGHT;
 	}
-	switch (this->tail.empty() ? TAIL_STRAIGHT : texture)
+	switch (this->tail.empty() ? TAIL_END : texture)
 	{
 	case TAIL_STRAIGHT:
 		this->meshes.push_back(new Mesh(objects[0], glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -10.f), glm::vec3(0.f, 0.f, textureRotation), glm::vec3(1.f, 1.f, 0.5f)));
@@ -418,6 +443,9 @@ void Game::growTail()
 		break;
 	case TAIL_TORIGHT:
 		this->meshes.push_back(new Mesh(objects[2], glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -10.f), glm::vec3(0.f, 0.f, textureRotation), glm::vec3(1.f, 1.f, 0.5f)));
+		break;
+	case TAIL_END:
+		this->meshes.push_back(new Mesh(objects[3], glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -10.f), glm::vec3(0.f, 0.f, textureRotation), glm::vec3(1.f, 1.f, 0.5f)));
 		break;
 	}
 	//this->meshes.push_back(new Mesh(&Cube(), glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -9.75f), glm::vec3(0.f, 0.f, textureRotation), glm::vec3(1.f, 1.f, 0.5f)));
@@ -430,14 +458,23 @@ void Game::growTail()
 
 void Game::updateFruits()
 {
+	glm::vec3 fruitPotPos(0.f);
+	switch (this->direction)
+	{
+	case UP: fruitPotPos = glm::vec3(this->head->getPosition().x, this->head->getPosition().y+1.f, this->head->getPosition().z); break;
+	case DOWN: fruitPotPos = glm::vec3(this->head->getPosition().x, this->head->getPosition().y - 1.f, this->head->getPosition().z); break;
+	case LEFT: fruitPotPos = glm::vec3(this->head->getPosition().x - 1.f, this->head->getPosition().y, this->head->getPosition().z);  break;
+	case RIGHT: fruitPotPos = glm::vec3(this->head->getPosition().x+1.f, this->head->getPosition().y, this->head->getPosition().z); break;
+	}
 	for (size_t i = 0; i < this->fruits.size(); i++) {
 		bool getOutOfHere = false;
-		while (this->fruits[i]->getOrigin() == this->head->getPosition() || getOutOfHere) {
+		while (this->fruits[i]->getOrigin() == fruitPotPos || getOutOfHere) {
 			getOutOfHere = false;
-			if (tail.size() == board.size() - amountOfFruits) { amountOfFruits--;  return; }
+			if (tail.size() >= board.size() - amountOfFruits - 1) { amountOfFruits--; fruits.at(i)->~Model(); this->shouldGrow = true; return; }
 			this->shouldGrow = true;
 			this->fruits[i]->setOrigin(glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -10.f));
 			for (size_t j = 0; j < this->tail.size(); j++) if (this->tail[j]->getOrigin() == this->fruits[i]->getOrigin()) getOutOfHere = true;
+			if (this->head->getPosition() == this->fruits[i]->getOrigin()) getOutOfHere = true;
 			for (size_t j = 0; j < this->fruits.size(); j++) if (this->fruits[j]->getOrigin() == this->fruits[i]->getOrigin() && i!=j) getOutOfHere = true;
 		}
 	}
@@ -460,6 +497,7 @@ void Game::updateGameOver()
 		|| this->head->getPosition().x >= this->boardPos.x + this->boardWidth
 		) gameOver = true;
 	for (size_t i = 0; i < tail.size(); i++) if (tail[i]->getOrigin() == head->getPosition()) gameOver = true;
+	if (!amountOfFruits) gameOver = true;
 }
 
 void Game::updateMouseInput()
