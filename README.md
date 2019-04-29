@@ -5,7 +5,9 @@ Poza plikami w repo dolaczyc do projektu nalezy takze foldery z glfw i glew.
 Peace.
 
 Wersja openGLa -> 4.5
+
 Kompilator -> MSVC
+
 Wykorzystane biblioteki zewnetrzne:
 - Glew (do zarzadzania GL-em)
 - Glfw (do zarzadzania oknem)
