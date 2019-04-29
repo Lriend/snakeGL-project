@@ -20,3 +20,24 @@ Current game state of preparation:
 
 I hate C++, my dudes, but i will finish this one project. I guess...
 ![](https://i.kym-cdn.com/entries/icons/original/000/028/021/work.jpg)
+
+Todo:
+- bonusy
+- punktacja
+- menu, a w nim:
+  - szybka gra z bonusami
+  - szybka gra klasyczna
+  - customowa gra, konfigurowalne elementy to:
+    - wysokosc planszy
+    - szerokosc planszy
+    - ktore bonusy maja sie pojawiac
+    - co ile i na ile tickow maja sie pojawiac
+    - ilosc owocow na planszy
+    - szybkosc weza
+  - scoreboard z najlepszymi wynikami
+  - opcje, a w nich:
+    - kolor tla
+    - glosnosc muzyki
+    - sposob rysowania obiektow (fill / wireframe)
+  - exit
+- muzyka
