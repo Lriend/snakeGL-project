@@ -4,7 +4,7 @@
 
 //ENUMS
 enum SHADER{SHADER_CORE_PROGRAM};
-enum TEXTURE{COLORFULL, CHERRY, STAR_CUBE, FIELD, TAIL_RGB, TAIL_STRAIGHT, TAIL_TORIGHT, TAIL_TOLEFT, TAIL_END, BROWN, RED};
+enum TEXTURE{COLORFULL, CHERRY, STAR_CUBE, FIELD, TAIL_RGB, TAIL_STRAIGHT, TAIL_TORIGHT, TAIL_TOLEFT, TAIL_END, RED, GRAY, BROWN, GREEN, BLACK, BLUE, YELLOW};
 enum MESH{MESH_PLANE, MESH_CUBE, MESH_FIELD};
 enum DIRECTION{UP, DOWN, LEFT, RIGHT};
 enum GAME_STATE{MENU, FAST_GAME, CUSTOM_GAME};
@@ -87,15 +87,18 @@ class Game
 	//Collectibles
 	int amountOfFruits;
 	std::vector<Model*> fruits;
-	std::vector<Model*> bonus;
-	std::vector<unsigned> bonusType;
+	Model* bonus;
+	unsigned bonusType;
 	int bonusFreq;
+	bool gimmeBonus;
+	float invertFor;
 
 	//Objects
 	std::vector<Object*> objects;
 
 	//Manager
 	bool pause;
+	bool wireframed;
 	GAME_STATE state;
 
 //Private functions
@@ -140,7 +143,7 @@ public:
 //Snake
 //Update update
 	void updateFruits();
-	void updateBonuses();
+	void updateBonus();
 	void updateDirection();
 	void updateGameOver();
 
@@ -155,7 +158,6 @@ public:
 	void drawBoard();
 	void drawSnake();
 	void drawFruits();
-	void drawBonuses();
 //Update input
 	void updateMouseInput();
 	void updateKeyboardInput();
