@@ -107,8 +107,8 @@ void Game::init(GAME_STATE state)
 {
 	switch (state) {
 	case FAST_GAME:
-		this->boardWidth = 4;
-		this->boardHeight = 4;
+		this->boardWidth = 20;
+		this->boardHeight = 15;
 		this->camPosition = glm::vec3(0.f, 0.f, boardWidth > boardHeight ? (float)boardWidth / 2 - 9 : (float)boardHeight / 2 - 9); //set Cam position
 		this->initMatrices(); //Cam position updated in matrices
 
@@ -128,12 +128,12 @@ void Game::initObjects()
 	this->objects.push_back(new Object("Objects/cornerToRightFR.obj"));
 	this->objects.push_back(new Object("Objects/endFR.obj"));
 	this->objects.push_back(new Object("Objects/headBG.obj"));
-	//this->objects.push_back(new Object("Objects/cherry.obj"));
-	//this->objects.push_back(new Object("Objects/bunny.obj"));
-	//this->objects.push_back(new Object("Objects/shroom.obj"));
-	//this->objects.push_back(new Object("Objects/turtle2.obj"));
+	this->objects.push_back(new Object("Objects/cherry.obj"));
+	this->objects.push_back(new Object("Objects/bunny.obj"));
+	this->objects.push_back(new Object("Objects/shroom.obj"));
+	this->objects.push_back(new Object("Objects/turtle2.obj"));
 	this->objects.push_back(new Object("Objects/question.obj"));
-	//this->objects.push_back(new Object("Objects/bomb.obj"));
+	this->objects.push_back(new Object("Objects/bomb.obj"));
 }
 
 void Game::initModels()
@@ -172,6 +172,7 @@ void Game::initFruits()
 	}
 }
 
+
 void Game::initLights()
 {
 	this->lights.push_back(new glm::vec3(0.f, 0.f, 1.f));
@@ -207,6 +208,7 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->boardHeight = 20;
 
 	this->amountOfFruits = 3;
+	this->bonusFreq = 5;
 
 	this->tick = 0.5f;
 	this->speed = 1.f;
@@ -295,6 +297,7 @@ void Game::update()
 		this->freezeFor = this->tick/speed; //Speed
 		//UPDATE GAME
 		if (this->weNeedANewPlague >= this->freezeFor && !gameOver) {
+			updateBonuses();
 			updateFruits();
 			if (shouldGrow) growTail();
 			else moveTail();
@@ -325,6 +328,7 @@ void Game::render()
 	drawBoard();
 	drawSnake();
 	drawFruits();
+	drawBonuses();
 
 	//Object from file attempt Monkey
 	this->models[0]->render(this->shaders[SHADER_CORE_PROGRAM]);
@@ -349,7 +353,7 @@ void Game::drawBoard()
 	this->textures[FIELD]->bind(SPECULAR_TEX); //Do podmiany tekstura specular
 	for (size_t i = 0; i < this->board.size(); i++)
 		this->board[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //Czy wireframe czy fill to tutaj chyba zrobimy, nie? Prostego ifa jakiegos ;)
 }
 
 void Game::drawSnake()
@@ -370,6 +374,12 @@ void Game::drawFruits()
 	for (size_t i = 0; i < this->fruits.size(); i++)
 		this->fruits[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
+}
+
+void Game::drawBonuses()
+{
+	for (size_t i = 0; i < this->bonus.size(); i++)
+		this->bonus[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 }
 
 void Game::moveSnake()
@@ -477,6 +487,19 @@ void Game::updateFruits()
 			if (this->head->getPosition() == this->fruits[i]->getOrigin()) getOutOfHere = true;
 			for (size_t j = 0; j < this->fruits.size(); j++) if (this->fruits[j]->getOrigin() == this->fruits[i]->getOrigin() && i!=j) getOutOfHere = true;
 		}
+	}
+}
+
+void Game::updateBonuses()
+{
+	std::srand((unsigned int)time(NULL));
+	if (rand() % this->bonusFreq == 0) {
+		unsigned type = 6 + rand() % 5;
+		this->meshes.push_back(new Mesh(objects[type], glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -10.f)));
+		this->bonus.push_back(new Model(meshes.empty() ? glm::vec3(0.f) : meshes[0]->getPosition(), this->materials[0], this->textures[RED], this->textures[RED], this->meshes));
+		for (auto*&i : this->meshes) delete i;
+		this->meshes.clear();
+		this->bonusType.push_back(type);
 	}
 }
 

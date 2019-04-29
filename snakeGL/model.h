@@ -34,4 +34,3 @@ public:
 	void update();
 	void render(Shader* shader);
 };
-

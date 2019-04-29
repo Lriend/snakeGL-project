@@ -84,9 +84,12 @@ class Game
 	float speed;
 	float tick;
 
-	//Fruits
+	//Collectibles
 	int amountOfFruits;
 	std::vector<Model*> fruits;
+	std::vector<Model*> bonus;
+	std::vector<unsigned> bonusType;
+	int bonusFreq;
 
 	//Objects
 	std::vector<Object*> objects;
@@ -137,6 +140,7 @@ public:
 //Snake
 //Update update
 	void updateFruits();
+	void updateBonuses();
 	void updateDirection();
 	void updateGameOver();
 
@@ -151,7 +155,7 @@ public:
 	void drawBoard();
 	void drawSnake();
 	void drawFruits();
-
+	void drawBonuses();
 //Update input
 	void updateMouseInput();
 	void updateKeyboardInput();
