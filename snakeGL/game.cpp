@@ -17,8 +17,9 @@ void Game::reset()
 	this->slowFor = 0.f;
 	this->fruits.clear();
 	this->initFruits();
-	this->bonus->~Model();
+	if(this->bonus)	this->bonus->~Model();
 	this->bonusType = 0;
+	//TODO ___________________________________________________________ZROB_ZLOTY_OWOC_KTORY_DAJE_10X_WIECEJ_PUNKTOW_ALE_PRZEZ_5_NASTEPNYCH_TICKOW_BEDZIESZ_CIAGLE_ROSNAC____________________________________________
 }
 
 //Private functions
@@ -105,8 +106,8 @@ void Game::initShaders()
 void Game::initTextures()
 {	
 	//this->textures.push_back(new Texture("Textures/star.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Textures/colorfull.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Textures/cherry.png", GL_TEXTURE_2D));
+	//this->textures.push_back(new Texture("Textures/colorfull.png", GL_TEXTURE_2D));
+	//this->textures.push_back(new Texture("Textures/cherry.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/starCube.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/field.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Textures/tailtemptex.png", GL_TEXTURE_2D));
@@ -167,16 +168,16 @@ void Game::initObjects()
 void Game::initModels()
 {
 	this->meshes.push_back(new Mesh(&Object("Objects/nMonkey.obj"), glm::vec3((float)boardWidth / 2 + 2.5f, -(float)boardHeight / 2 + 4, -10.f)));
-	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[STAR_CUBE], this->textures[STAR_CUBE], this->meshes));
+	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[WHITE], this->textures[WHITE], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 	this->meshes.push_back(new Mesh(&Object("Objects/snakeGL.obj"), glm::vec3((float)boardWidth / 2 + 1.f, -(float)boardHeight / 2 +1.f, -10.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f)));
-	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[STAR_CUBE], this->textures[STAR_CUBE], this->meshes));
+	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[WHITE], this->textures[WHITE], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 	float temp = boardHeight > boardWidth ? (float)boardHeight / 10 : (float)boardWidth / 10;
 	this->meshes.push_back(new Mesh(&Object("Objects/gameover.obj"), glm::vec3((float)boardPos.x, (float)boardPos.y, -9.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
-	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[STAR_CUBE], this->textures[STAR_CUBE], this->meshes));
+	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[WHITE], this->textures[WHITE], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 	this->meshes.push_back(new Mesh(&Object("Objects/restart.obj"), glm::vec3((float)boardPos.x, (float)boardPos.y, -9.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
@@ -586,7 +587,7 @@ void Game::updateBonus()
 				if (fruitPotPos == glm::vec3(potX, potY, -10.f)) dont = true;
 			}
 			this->meshes.push_back(new Mesh(objects[type], glm::vec3(potX, potY, -10.f)));
-			this->bonus = new Model(meshes.empty() ? glm::vec3(0.f) : meshes[0]->getPosition(), this->materials[0], this->textures[4 + type], this->textures[4 + type], this->meshes);
+			this->bonus = new Model(meshes.empty() ? glm::vec3(0.f) : meshes[0]->getPosition(), this->materials[0], this->textures[2 + type], this->textures[2 + type], this->meshes);
 			for (auto*&i : this->meshes) delete i;
 			this->meshes.clear();
 			if (type == 10) type = 6 + rand() % 4;
@@ -664,6 +665,7 @@ void Game::handleGameEvents()
 	if (glfwGetKey(this->window, GLFW_KEY_R) == GLFW_PRESS)
 	{
 		reset();
+		std::this_thread::sleep_for(std::chrono::milliseconds(200));
 	}/*
 	if (glfwGetKey(this->window, GLFW_KEY_Z) == GLFW_PRESS) {
 		this->wireframed = !this->wireframed;
