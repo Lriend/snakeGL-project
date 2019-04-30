@@ -112,8 +112,8 @@ void Game::init(GAME_STATE state)
 {
 	switch (state) {
 	case FAST_GAME:
-		this->boardWidth = 3;
-		this->boardHeight = 2;
+		this->boardWidth = 10;
+		this->boardHeight = 10;
 		this->camPosition = glm::vec3(0.f, 0.f, boardWidth > boardHeight ? (float)boardWidth / 2 - 9 : (float)boardHeight / 2 - 9); //set Cam position
 		this->initMatrices(); //Cam position updated in matrices
 
