@@ -92,6 +92,9 @@ class Game
 	int bonusFreq;
 	bool gimmeBonus;
 	float invertFor;
+	float fastFor;
+	float slowFor;
+	float bonusTime;
 
 	//Objects
 	std::vector<Object*> objects;
@@ -99,6 +102,7 @@ class Game
 	//Manager
 	bool pause;
 	bool wireframed;
+	void reset();
 	GAME_STATE state;
 
 //Private functions
@@ -117,6 +121,7 @@ class Game
 	void initModels();
 	void initBoard(int width, int height);
 	void initHead();
+	void initTail();
 	void initFruits();
 
 
