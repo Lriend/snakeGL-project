@@ -37,9 +37,5 @@ Todo:
     - ilosc owocow na planszy
     - szybkosc weza
   - scoreboard z najlepszymi wynikami
-  - opcje, a w nich:
-    - kolor tla
-    - glosnosc muzyki
-    - sposob rysowania obiektow (fill / wireframe)
   - exit
 - muzyka
