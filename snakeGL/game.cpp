@@ -112,8 +112,8 @@ void Game::init(GAME_STATE state)
 {
 	switch (state) {
 	case FAST_GAME:
-		this->boardWidth = 10;
-		this->boardHeight = 7;
+		this->boardWidth = 3;
+		this->boardHeight = 2;
 		this->camPosition = glm::vec3(0.f, 0.f, boardWidth > boardHeight ? (float)boardWidth / 2 - 9 : (float)boardHeight / 2 - 9); //set Cam position
 		this->initMatrices(); //Cam position updated in matrices
 
@@ -150,6 +150,11 @@ void Game::initModels()
 	this->meshes.clear();
 	this->meshes.push_back(new Mesh(&Object("Objects/snakeGL.obj"), glm::vec3((float)boardWidth / 2 + 1.f, -(float)boardHeight / 2 +1.f, -10.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f)));
 	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[BLUE], this->textures[BLUE], this->meshes));
+	for (auto*&i : this->meshes) delete i;
+	this->meshes.clear();
+	float temp = boardHeight > boardWidth ? (float)boardHeight / 10 : (float)boardWidth / 10;
+	this->meshes.push_back(new Mesh(&Object("Objects/gameover.obj"), glm::vec3((float)boardPos.x - temp * 3.f, (float)boardPos.y- temp, -9.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[RED], this->textures[RED], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 }
@@ -255,7 +260,6 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 
 	//initState
 	this->init(state);
-
 	this->initLights();
 	this->initUniforms();
 }
@@ -267,6 +271,7 @@ Game::~Game()
 	for (size_t i = 0; i < this->shaders.size(); i++) delete this->shaders[i];
 	for (size_t i = 0; i < this->textures.size(); i++) delete this->textures[i];
 	for (size_t i = 0; i < this->materials.size(); i++) delete this->materials[i];
+	for (auto*&i : this->objects) delete i;
 	for (auto*&i : this->models) delete i;
 	for (auto*&i : this->board) delete i;
 	for (auto*&i : this->tail) delete i;
@@ -297,8 +302,9 @@ void Game::update()
 
 	//UPDATE MOUSE INPUT
 	updateMouseInput();
-	updateKeyboardInput();
 
+
+	handleGameEvents();
 	if (!pause) {
 		if(this->invertFor>0)this->invertFor -= deltaTime;
 		//UPDATE GAME INPUT
@@ -319,7 +325,7 @@ void Game::update()
 
 		//Rotate fruits
 		//for (size_t i = 0; i < this->fruits.size(); i++)	this->fruits[i]->rotate(glm::vec3(0.f, 5.f, 0.f)*this->deltaTime);
-		this->models[0]->rotate(glm::vec3(0.f, 25.f, 0.f)*this->deltaTime);
+		if(this->deltaTime) this->models[0]->rotate(glm::vec3(0.f, 25.f, 0.f)*this->deltaTime);
 	}
 }
 
@@ -339,11 +345,12 @@ void Game::render()
 	drawBoard();
 	drawSnake();
 	drawFruits(); 
-	if(!gimmeBonus)this->bonus->render(this->shaders[SHADER_CORE_PROGRAM]);
+	if(this->bonus)this->bonus->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 	//Object from file attempt Monkey
 	this->models[0]->render(this->shaders[SHADER_CORE_PROGRAM]);
 	this->models[1]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	if(this->gameOver) this->models[2]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 	//End Draw
 	glfwSwapBuffers(this->window); //Swap frames
@@ -374,6 +381,7 @@ void Game::drawSnake()
 	this->textures[YELLOW]->bind(SPECULAR_TEX); //Do podmiany tekstura specular
 	this->head->render(this->shaders[SHADER_CORE_PROGRAM]);
 
+	if(!this->tail.empty())
 	for (size_t i = 0; i < this->tail.size(); i++) {
 		this->tail[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 	}
@@ -486,12 +494,14 @@ void Game::updateFruits()
 		bool getOutOfHere = false;
 		while (this->fruits[i]->getOrigin() == fruitPotPos || getOutOfHere) {
 			getOutOfHere = false;
+			if (this->bonus && this->tail.size() >= this->board.size() - this->amountOfFruits - 5) { this->bonus->~Model(); this->gimmeBonus = false; }
 			if (tail.size() >= board.size() - amountOfFruits - 1) { amountOfFruits--; fruits.at(i)->~Model(); this->shouldGrow = true; return; }
 			this->shouldGrow = true;
 			this->fruits[i]->setOrigin(glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -10.f));
 			for (size_t j = 0; j < this->tail.size(); j++) if (this->tail[j]->getOrigin() == this->fruits[i]->getOrigin()) getOutOfHere = true;
 			if (this->head->getPosition() == this->fruits[i]->getOrigin()) getOutOfHere = true;
 			for (size_t j = 0; j < this->fruits.size(); j++) if (this->fruits[j]->getOrigin() == this->fruits[i]->getOrigin() && i!=j) getOutOfHere = true;
+			if (tail.size() < board.size() - amountOfFruits - 5) if (this->bonus) if (this->bonus->getOrigin() == this->fruits[i]->getOrigin()) getOutOfHere = true;
 		}
 	}
 }
@@ -508,48 +518,49 @@ void Game::updateBonus()
 	}
 	if (tail.size() >= board.size() - amountOfFruits - 5) gimmeBonus = false;
 	std::srand((unsigned int)time(NULL));
-	if (rand() % this->bonusFreq == 0 && this->gimmeBonus) {
-		unsigned type = 6 + rand() % 4;
-		bool dont = true;
-		float potX, potY;
-		while (dont) {
-			dont = false;
-			potX = boardPos.x + std::rand() % boardWidth;
-			potY = boardPos.y + std::rand() % boardHeight;
-			for (size_t j = 0; j < this->tail.size(); j++) if (this->tail[j]->getOrigin() == glm::vec3(potX, potY, -10.f)) dont = true;
-			for (size_t j = 0; j < this->fruits.size(); j++) if (this->fruits[j]->getOrigin() == glm::vec3(potX, potY, -10.f)) dont = true;
-			if (this->head->getPosition() == glm::vec3(potX, potY, -10.f)) dont = true;
-			if (fruitPotPos == glm::vec3(potX, potY, -10.f)) dont = true;
-		}
-		this->meshes.push_back(new Mesh(objects[type], glm::vec3(potX, potY, -10.f)));
-		this->bonus = new Model(meshes.empty() ? glm::vec3(0.f) : meshes[0]->getPosition(), this->materials[0], this->textures[4+type], this->textures[4+type], this->meshes);
-		for (auto*&i : this->meshes) delete i;
-		this->meshes.clear();
-		this->bonusType=type;
-		this->gimmeBonus = false;
-	}
-	if(!this->gimmeBonus)
-	if (this->bonus->getOrigin() == fruitPotPos) {
-		switch (bonusType) {
-		case 6:
-			this->speed *= 1.5f;
-			break;
-		case 7:
-			this->invertFor = 10.f;
-			break;
-		case 8:
-			this->speed /= 1.5f;
-			break;
-		case 9:
-			if (tail.size() > 1) {
-				int tailToCut = tail.size() / 2;
-					for (int i = 0; i < tailToCut; i++) this->tail.pop_front();
+	if (tail.size() < board.size() - amountOfFruits - 5)
+		if (rand() % this->bonusFreq == 0 && this->gimmeBonus) {
+			unsigned type = 6 + rand() % 4;
+			bool dont = true;
+			float potX, potY;
+			while (dont) {
+				dont = false;
+				potX = boardPos.x + std::rand() % boardWidth;
+				potY = boardPos.y + std::rand() % boardHeight;
+				for (size_t j = 0; j < this->tail.size(); j++) if (this->tail[j]->getOrigin() == glm::vec3(potX, potY, -10.f)) dont = true;
+				for (size_t j = 0; j < this->fruits.size(); j++) if (this->fruits[j]->getOrigin() == glm::vec3(potX, potY, -10.f)) dont = true;
+				if (this->head->getPosition() == glm::vec3(potX, potY, -10.f)) dont = true;
+				if (fruitPotPos == glm::vec3(potX, potY, -10.f)) dont = true;
 			}
+			this->meshes.push_back(new Mesh(objects[type], glm::vec3(potX, potY, -10.f)));
+			this->bonus = new Model(meshes.empty() ? glm::vec3(0.f) : meshes[0]->getPosition(), this->materials[0], this->textures[4 + type], this->textures[4 + type], this->meshes);
+			for (auto*&i : this->meshes) delete i;
+			this->meshes.clear();
+			this->bonusType = type;
+			this->gimmeBonus = false;
 		}
-		this->bonus->~Model();
-		this->gimmeBonus = true;
-	}
-
+	if (tail.size() < board.size() - amountOfFruits - 5)
+		if (this->bonus)
+			if (this->bonus->getOrigin() == fruitPotPos) {
+				switch (bonusType) {
+				case 6:
+					//this->speed *= 1.5f;
+					break;
+				case 7:
+					//this->invertFor = 10.f;
+					break;
+				case 8:
+					this->speed /= 1.5f;
+					break;
+				case 9:
+					if (tail.size() > 1) {
+						int tailToCut = tail.size() / 2;
+						for (int i = 0; i < tailToCut; i++) this->tail.pop_front();
+					}
+				}
+				this->bonus->~Model();
+				this->gimmeBonus = true;
+			}
 }
 
 void Game::updateDirection()
@@ -580,6 +591,19 @@ void Game::updateGameOver()
 	if (!amountOfFruits) gameOver = true;
 }
 
+void Game::handleGameEvents()
+{
+	if (glfwGetKey(this->window, GLFW_KEY_P) == GLFW_PRESS)
+	{
+		this->pause = !this->pause;
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	}
+	if (glfwGetKey(this->window, GLFW_KEY_Z) == GLFW_PRESS) {
+		this->wireframed = !this->wireframed;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+}
+
 void Game::updateMouseInput()
 {
 	glfwGetCursorPos(this->window, &this->mouseX, &this->mouseY);
@@ -597,18 +621,6 @@ void Game::updateMouseInput()
 	this->lastMouseY = this->mouseY;
 }
 
-void Game::updateKeyboardInput()
-{
-	if (glfwGetKey(this->window, GLFW_KEY_P) == GLFW_PRESS)
-	{
-		this->pause = !this->pause;
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
-	}
-	if (glfwGetKey(this->window, GLFW_KEY_Z) == GLFW_PRESS) {
-		this->wireframed = !this->wireframed;
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	}
-}
 
 void Game::updateDeltaTime()
 {

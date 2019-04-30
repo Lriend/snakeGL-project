@@ -131,6 +131,7 @@ public:
 	Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable);
 	virtual ~Game();
 
+
 //Getters
 	int getWindowShouldClose();
 
@@ -146,6 +147,7 @@ public:
 	void updateBonus();
 	void updateDirection();
 	void updateGameOver();
+	void handleGameEvents();
 
 //Update render
 	void moveSnake();
@@ -153,14 +155,12 @@ public:
 	void growTail();
 
 //MENU
-
 //Render
 	void drawBoard();
 	void drawSnake();
 	void drawFruits();
 //Update input
 	void updateMouseInput();
-	void updateKeyboardInput();
 	void updateDeltaTime();
 
 //Static functions
