@@ -33,10 +33,10 @@
     <ClCompile Include="prefab.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game.cpp">
+    <ClCompile Include="model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="model.cpp">
+    <ClCompile Include="game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,10 +62,10 @@
     <ClInclude Include="prefab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game.h">
+    <ClInclude Include="model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="model.h">
+    <ClInclude Include="game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -30,3 +30,5 @@
 #include "material.h"
 #include "mesh.h"
 #include "model.h"
+
+enum TEXTURE { WHITE, FIELD, TAIL_RGB, TAIL_STRAIGHT, TAIL_TORIGHT, TAIL_TOLEFT, TAIL_END, RED, GRAY, BROWN, GREEN, BLACK, GOLDEN, BLUE, YELLOW };
