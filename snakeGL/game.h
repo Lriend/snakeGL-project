@@ -2,17 +2,13 @@
 #include "libraries.h"
 
 //ENUMS
-enum SHADER{SHADER_CORE_PROGRAM};
-
-enum MESH{MESH_PLANE, MESH_CUBE, MESH_FIELD};
-enum DIRECTION{UP, DOWN, LEFT, RIGHT};
-enum GAME_STATE{MENU, FAST_GAME, CUSTOM_GAME};
+enum DIRECTION{ UP, DOWN, LEFT, RIGHT };
+enum GAME_STATE { MENU, GAME };
+enum GAME_TYPE { FAST, CLASSIC, CUSTOM };
 
 class Game
 {
-	//Mamber vars
-
-		//Window
+	//Window
 	GLFWwindow* window;
 	const int WINDOW_WIDTH;
 	const int WINDOW_HEIGHT;
@@ -23,7 +19,8 @@ class Game
 	const int GL_VERSION_MAJOR;
 	const int GL_VERSION_MINOR;
 
-	GAME_STATE state;
+	GAME_STATE gameState;
+	GAME_TYPE gameType;
 
 	//Mouse Input
 	double lastMouseX;
@@ -95,7 +92,7 @@ class Game
 	//initState
 	void initObjects();
 	void initModels();
-	void initBoard(int width, int height);
+	void initBoard();
 	void initHead();
 	void initTail();
 	void initFruits();
@@ -135,7 +132,6 @@ class Game
 
 	void updateUniforms();
 
-
 	void updateFruits();
 	void updateBonus();
 	void updateDirection();
@@ -148,15 +144,9 @@ class Game
 	void drawBoard();
 	void drawSnake();
 	void drawFruits();
-public:
-	void init(GAME_STATE state);
+
 	void handleGameEvents();
 	void updateDeltaTime();
-
-
-
-	//Static vars
-
 public:
 	//Ctor & dtor
 	Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable);

@@ -7,6 +7,5 @@ int main() {
 		snake.update();
 		snake.render();
 	}
-	
 	return 0;
 }
