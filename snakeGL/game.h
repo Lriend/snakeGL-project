@@ -2,9 +2,11 @@
 #include "libraries.h"
 
 //ENUMS
-enum DIRECTION{ UP, DOWN, LEFT, RIGHT };
+enum DIRECTION { UP, DOWN, LEFT, RIGHT };
 enum GAME_STATE { MENU, GAME };
 enum GAME_TYPE { FAST, CLASSIC, CUSTOM };
+enum BONUS { BUNNY, MUSHROOM, TURTLE, BOMB, APPLE, QUESTION };
+enum MENU_ELEMENT { FAST_GAME, CLASSIC_GAME, CUSTOM_GAME, SCORE_BOARD, SETTINGS, EXIT };
 
 class Game
 {
@@ -19,8 +21,17 @@ class Game
 	const int GL_VERSION_MAJOR;
 	const int GL_VERSION_MINOR;
 
+	std::vector<Mesh*> GUIelements;
 	GAME_STATE gameState;
 	GAME_TYPE gameType;
+	unsigned menuElement;
+
+	bool iWantBunny;
+	bool iWantShrooms;
+	bool iWantTurtles;
+	bool iWantBombs;
+	bool iWantApple;
+	bool surpriseMe;
 
 	//Mouse Input
 	double lastMouseX;
@@ -81,13 +92,11 @@ class Game
 	float slowFor;
 	int goldenApple;
 	float bonusTime;
-
+	
 	//Manager
 	bool pause;
 	bool wireframed;
-	void reset();
-
-	int fbW, fbH;
+	void setGame();
 
 	//initState
 	void initObjects();
@@ -97,7 +106,6 @@ class Game
 	void initTail();
 	void initFruits();
 
-	int GLmaj, GLmin;
 	//Matrices
 	glm::mat4 ViewMatrix;
 	glm::vec3 camPosition;
@@ -145,13 +153,14 @@ class Game
 	void drawSnake();
 	void drawFruits();
 
-	void handleGameEvents();
 	void updateDeltaTime();
+	void handleGameEvents();
+	void handleMenuEvents();
+
 public:
 	//Ctor & dtor
 	Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable);
 	virtual ~Game();
-
 
 	//Getters
 	int getWindowShouldClose();

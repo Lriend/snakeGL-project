@@ -1,11 +1,31 @@
 #include "game.h"
 
-void Game::reset()
+void Game::setGame()
 {
-
-	this->boardWidth > this->boardHeight ? this->boardHeight++ : this->boardWidth++;
-	this->amountOfFruits = 3;
-
+	//set some tingz
+	switch (this->gameType)
+	{
+	case FAST:
+		this->amountOfFruits = 5;
+		this->boardHeight = 10;
+		this->boardWidth = 15;
+		this->bonusFreq = 25;
+		this->bonusTime = 10;
+		this->gimmeBonus = true;
+		this->iWantApple = this->iWantBombs = this->iWantBunny = this->iWantShrooms = this->iWantTurtles = this->surpriseMe = true;
+		this->speed = 2.f;
+		break;
+	case CLASSIC:
+		this->amountOfFruits = 10;
+		this->boardHeight = 10;
+		this->boardWidth = 10;
+		this->iWantApple = this->iWantBombs = this->iWantBunny = this->iWantShrooms = this->iWantTurtles = this->surpriseMe = false;
+		this->speed = 1.f;
+		break;
+	case CUSTOM:
+		break;
+	}
+	
 	//reset
 	this->board.clear();
 	this->initBoard();
@@ -20,8 +40,8 @@ void Game::reset()
 	this->tail.clear();
 	this->initTail();
 	this->shouldGrow = false;
-	this->tick = 0.5f;
-	this->speed = 1.f;
+	this->tick = 5.f;
+	this->speed = 10.f;
 	this->gimmeBonus = true;
 	this->invertFor = 0.f;
 	this->fastFor = 0.f;
@@ -165,6 +185,9 @@ void Game::initObjects()
 	this->objects.push_back(new Object("Objects/gameover.obj"));
 	this->objects.push_back(new Object("Objects/restart.obj"));
 	this->objects.push_back(new Object("Objects/pause.obj"));
+	this->objects.push_back(new Object("Objects/fastGame.obj"));
+	this->objects.push_back(new Object("Objects/classicGame.obj"));
+	this->objects.push_back(new Object("Objects/customGame.obj"));
 }
 
 void Game::initModels()
@@ -173,7 +196,7 @@ void Game::initModels()
 	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[WHITE], this->textures[WHITE], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
-	this->meshes.push_back(new Mesh(objects[13], glm::vec3((float)boardWidth / 2 + 1.f, -(float)boardHeight / 2 + 1.f, -10.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f)));
+	this->meshes.push_back(new Mesh(objects[13], glm::vec3((float)boardWidth / 2 + 3.f, -(float)boardHeight / 2 + 1.f, -10.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(1.f, 0.5f, 1.f)));
 	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[WHITE], this->textures[WHITE], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
@@ -190,7 +213,21 @@ void Game::initModels()
 	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[BLUE], this->textures[BLUE], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
-}
+
+	this->meshes.push_back(new Mesh(objects[13], glm::vec3(0.f,0.f,	-4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[WHITE], this->textures[WHITE], this->meshes));
+	for (auto*&i : this->meshes) delete i;
+	this->meshes.clear();
+	
+	this->GUIelements.push_back(new Mesh(objects[17], glm::vec3(0.f, 0.f, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3*temp*1.f, 3 * temp*0.5f, 3 * temp*1.f)));
+	this->GUIelements.push_back(new Mesh(objects[18], glm::vec3(0.f, 0.f, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3 * temp*1.f, 3 * temp*0.5f, 3 * temp*1.f)));
+	this->GUIelements.push_back(new Mesh(objects[19], glm::vec3(0.f, 0.f, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3 * temp*1.f, 3 * temp*0.5f, 3 * temp*1.f)));
+	/*
+	this->GUIelements.push_back(new Mesh(objects[20], glm::vec3((float)boardPos.x + this->boardWidth / 2, (float)boardPos.y + this->boardHeight / 2, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->GUIelements.push_back(new Mesh(objects[21], glm::vec3((float)boardPos.x + this->boardWidth / 2, (float)boardPos.y + this->boardHeight / 2, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->GUIelements.push_back(new Mesh(objects[22], glm::vec3((float)boardPos.x + this->boardWidth / 2, (float)boardPos.y + this->boardHeight / 2, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	*/
+	}
 
 
 void Game::initBoard()
@@ -254,8 +291,9 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	: WINDOW_WIDTH(width), WINDOW_HEIGHT(height), GL_VERSION_MAJOR(glMajorVer), GL_VERSION_MINOR(glMinorVer)
 {
 	//Init vars
-	this->gameState = GAME;
+	this->gameState = MENU;
 	this->gameType = FAST;
+	this->menuElement = FAST_GAME;
 
 	this->boardWidth = 3;
 	this->boardHeight = 4;
@@ -264,8 +302,10 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->bonusFreq = 25;
 	this->bonusTime = 0.f;
 
-	this->tick = 0.5f;
-	this->speed = 1.f;
+	this->iWantApple = this->iWantBombs = this->iWantBunny = this->iWantShrooms = this->iWantTurtles = this->surpriseMe = true;
+
+	this->tick = 5.f;
+	this->speed = 10.f;
 	this->direction = RIGHT;
 	this->shouldGrow = false;
 	this->gimmeBonus = true;
@@ -311,6 +351,8 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 
 	this->initLights();
 	this->initUniforms();
+
+	this->setGame();
 }
 
 Game::~Game()
@@ -351,35 +393,40 @@ void Game::update()
 
 	//UPDATE MOUSE INPUT
 	updateMouseInput();
-
-	handleGameEvents();
-	if (!pause) {
-		if (this->fastFor > 0) { this->fastFor -= deltaTime; this->speed = 2.f; }
-		else
-			if (this->slowFor > 0) { this->slowFor -= deltaTime; this->speed = .5f; }
+	if (gameState) {
+		handleGameEvents();
+		if (!pause) {
+			if (this->fastFor > 0) { this->fastFor -= deltaTime; this->tick = 2.5f; }
 			else
-				this->speed = 1.f;
-		if (this->invertFor > 0) { this->invertFor -= deltaTime; this->wireframed = true; }
-		else
-			this->wireframed = false;
-		if (bonusTime) this->bonusTime -= deltaTime;
-		//UPDATE GAME INPUT
-		updateDirection();
-		updateGameOver();
-		this->freezeFor = this->tick / speed; //Speed
+				if (this->slowFor > 0) { this->slowFor -= deltaTime; this->tick = 10.f; }
+				else
+					this->tick = 5.f;
+			if (this->invertFor > 0) { this->invertFor -= deltaTime; this->wireframed = true; }
+			else
+				this->wireframed = false;
+			if (bonusTime) this->bonusTime -= deltaTime;
+			//UPDATE GAME INPUT
+			updateDirection();
+			updateGameOver();
+			this->freezeFor = this->tick / speed; //Speed
 
-		//UPDATE GAME
-		if (this->weNeedANewPlague >= this->freezeFor && !gameOver) {
-			updateBonus();
-			updateFruits();
-			if (this->goldenApple) { this->goldenApple--; this->shouldGrow = true; }
-			if (shouldGrow) growTail();
-			else moveTail();
-			moveSnake();
-			this->weNeedANewPlague = 0;
+			//UPDATE GAME
+			if (this->weNeedANewPlague >= this->freezeFor && !gameOver) {
+				updateBonus();
+				updateFruits();
+				if (this->goldenApple) { this->goldenApple--; this->shouldGrow = true; }
+				if (shouldGrow) growTail();
+				else moveTail();
+				moveSnake();
+				this->weNeedANewPlague = 0;
+			}
+			else this->weNeedANewPlague += this->deltaTime;
+			if (this->deltaTime) this->models[0]->rotate(glm::vec3(0.f, 25.f, 0.f)*this->deltaTime);
 		}
-		else this->weNeedANewPlague += this->deltaTime;
-		if (this->deltaTime) this->models[0]->rotate(glm::vec3(0.f, 25.f, 0.f)*this->deltaTime);
+	}
+	else
+	{
+		handleMenuEvents();
 	}
 }
 
@@ -396,20 +443,30 @@ void Game::render()
 	//Use a program
 	this->shaders[SHADER_CORE_PROGRAM]->use();
 	//Activate textures and draw stuff
-	drawBoard();
-	drawSnake();
-	drawFruits();
-	if (this->bonus)this->bonus->render(this->shaders[SHADER_CORE_PROGRAM]);
+	if (gameState) {
+		drawBoard();
+		drawSnake();
+		drawFruits();
+		if (this->bonus)this->bonus->render(this->shaders[SHADER_CORE_PROGRAM]);
 
-	//Object from file attempt Monkey
-	this->models[0]->render(this->shaders[SHADER_CORE_PROGRAM]);
-	this->models[1]->render(this->shaders[SHADER_CORE_PROGRAM]);
-	if (this->gameOver) {
-		this->models[2]->render(this->shaders[SHADER_CORE_PROGRAM]);
-		this->models[3]->render(this->shaders[SHADER_CORE_PROGRAM]);
+		//Object from file attempt Monkey
+		this->models[0]->render(this->shaders[SHADER_CORE_PROGRAM]);
+		this->models[1]->render(this->shaders[SHADER_CORE_PROGRAM]);
+		if (this->gameOver) {
+			this->models[2]->render(this->shaders[SHADER_CORE_PROGRAM]);
+			this->models[3]->render(this->shaders[SHADER_CORE_PROGRAM]);
+		}
+		if (this->pause) this->models[4]->render(this->shaders[SHADER_CORE_PROGRAM]);
 	}
-	if (this->pause) this->models[4]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	else 
+	{
+		this->models[5]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
+		for (size_t i = 0; i < 3; i++) {
+			this->textures[i == menuElement ? RED : WHITE]->bind(DIFFUSE_TEX);
+			GUIelements[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
+		}
+	}
 	//End Draw
 	glfwSwapBuffers(this->window); //Swap frames
 	glFlush(); //glFlush -> GL. Flush.
@@ -450,7 +507,6 @@ void Game::drawFruits()
 	//CHERRY PLANE yes.
 	for (size_t i = 0; i < this->fruits.size(); i++)
 		this->fruits[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
-
 }
 
 
@@ -571,74 +627,88 @@ void Game::updateFruits()
 
 void Game::updateBonus()
 {
-	glm::vec3 fruitPotPos(0.f);
-	switch (this->direction)
-	{
-	case UP: fruitPotPos = glm::vec3(this->head->getPosition().x, this->head->getPosition().y + 1.f, this->head->getPosition().z); break;
-	case DOWN: fruitPotPos = glm::vec3(this->head->getPosition().x, this->head->getPosition().y - 1.f, this->head->getPosition().z); break;
-	case LEFT: fruitPotPos = glm::vec3(this->head->getPosition().x - 1.f, this->head->getPosition().y, this->head->getPosition().z);  break;
-	case RIGHT: fruitPotPos = glm::vec3(this->head->getPosition().x + 1.f, this->head->getPosition().y, this->head->getPosition().z); break;
-	}
-	if(bonus) for (size_t j = 0; j < this->tail.size(); j++) if (this->tail[j]->getOrigin() == this->bonus->getOrigin()) this->bonusType = 0;
-	if (this->bonusType == 0 && this->bonus) this->bonus->~Model();
-	if (tail.size() >= board.size() - amountOfFruits - 5) gimmeBonus = false;
-	std::srand((unsigned int)time(NULL));
-	if (tail.size() < board.size() - amountOfFruits - 5)
-		if (rand() % this->bonusFreq == 0 && this->gimmeBonus) {
-			this->bonusTime = 10.f;
-			unsigned type = 6 + rand() % 6;
-			bool dont = true;
-			float potX, potY;
-			while (dont) {
-				dont = false;
-				potX = boardPos.x + std::rand() % boardWidth;
-				potY = boardPos.y + std::rand() % boardHeight;
-				for (size_t j = 0; j < this->tail.size(); j++) if (this->tail[j]->getOrigin() == glm::vec3(potX, potY, -10.f)) dont = true;
-				for (size_t j = 0; j < this->fruits.size(); j++) if (this->fruits[j]->getOrigin() == glm::vec3(potX, potY, -10.f)) dont = true;
-				if (this->head->getPosition() == glm::vec3(potX, potY, -10.f)) dont = true;
-				if (fruitPotPos == glm::vec3(potX, potY, -10.f)) dont = true;
-			}
-			this->meshes.push_back(new Mesh(objects[type], glm::vec3(potX, potY, -10.f)));
-			this->bonus = new Model(meshes.empty() ? glm::vec3(0.f) : meshes[0]->getPosition(), this->materials[0], this->textures[2 + type], this->textures[2 + type], this->meshes);
-			for (auto*&i : this->meshes) delete i;
-			this->meshes.clear();
-			if (type == 11) type = 6 + rand() % 5;
-			this->bonusType = type;
-			this->gimmeBonus = false;
+	if (iWantApple || iWantBombs || iWantBunny || iWantTurtles || iWantShrooms || surpriseMe) {
+		glm::vec3 fruitPotPos(0.f);
+		switch (this->direction)
+		{
+		case UP: fruitPotPos = glm::vec3(this->head->getPosition().x, this->head->getPosition().y + 1.f, this->head->getPosition().z); break;
+		case DOWN: fruitPotPos = glm::vec3(this->head->getPosition().x, this->head->getPosition().y - 1.f, this->head->getPosition().z); break;
+		case LEFT: fruitPotPos = glm::vec3(this->head->getPosition().x - 1.f, this->head->getPosition().y, this->head->getPosition().z);  break;
+		case RIGHT: fruitPotPos = glm::vec3(this->head->getPosition().x + 1.f, this->head->getPosition().y, this->head->getPosition().z); break;
 		}
-	if (tail.size() < board.size() - amountOfFruits - 10) {
-		if (this->bonus) {
-			if (this->bonus->getOrigin() == fruitPotPos) {
-				switch (bonusType) {
-				case 6:
-					this->fastFor = 10.f;
-					break;
-				case 7:
-					this->invertFor = 5.f;
-					break;
-				case 8:
-					this->slowFor = 10.f;
-					break;
-				case 9:
-					if (tail.size() > 1) {
-						int tailToCut = tail.size() / 2;
-						for (int i = 0; i < tailToCut; i++) this->tail.pop_front();
-					}
-					break;
-				case 10:
-					this->goldenApple = 5;
-					break;
+		if (bonus) for (size_t j = 0; j < this->tail.size(); j++) if (this->tail[j]->getOrigin() == this->bonus->getOrigin()) this->bonusType = 0;
+		if (this->bonusType == 0 && this->bonus) this->bonus->~Model();
+		if (tail.size() >= board.size() - amountOfFruits - 5) gimmeBonus = false;
+		std::srand((unsigned int)time(NULL));
+		if (tail.size() < board.size() - amountOfFruits - 5)
+			if (rand() % this->bonusFreq == 0 && this->gimmeBonus) {
+				this->bonusTime = 10.f;
+				bool rerand = true;
+				unsigned type;
+				while (rerand) {
+					rerand = false;
+					type = 6 + rand() % 6;
+					if (!iWantBunny && type == 6 + BUNNY) rerand = true;
+					if (!iWantApple && type == 6 + APPLE) rerand = true;
+					if (!iWantTurtles && type == 6 + TURTLE) rerand = true;
+					if (!iWantShrooms && type == 6 + MUSHROOM) rerand = true;
+					if (!iWantBombs && type == 6 + BOMB) rerand = true;
+					if (!surpriseMe && type == 6 + QUESTION) rerand = true;
 				}
-				this->bonus->~Model();
-				this->bonusType = 0;
-				this->gimmeBonus = true;
+				bool dont = true;
+				float potX, potY;
+				while (dont) {
+					dont = false;
+					potX = boardPos.x + std::rand() % boardWidth;
+					potY = boardPos.y + std::rand() % boardHeight;
+					for (size_t j = 0; j < this->tail.size(); j++) if (this->tail[j]->getOrigin() == glm::vec3(potX, potY, -10.f)) dont = true;
+					for (size_t j = 0; j < this->fruits.size(); j++) if (this->fruits[j]->getOrigin() == glm::vec3(potX, potY, -10.f)) dont = true;
+					if (this->head->getPosition() == glm::vec3(potX, potY, -10.f)) dont = true;
+					if (fruitPotPos == glm::vec3(potX, potY, -10.f)) dont = true;
+				}
+				this->meshes.push_back(new Mesh(objects[type], glm::vec3(potX, potY, -10.f)));
+				this->bonus = new Model(meshes.empty() ? glm::vec3(0.f) : meshes[0]->getPosition(), this->materials[0], this->textures[2 + type], this->textures[2 + type], this->meshes);
+				for (auto*&i : this->meshes) delete i;
+				this->meshes.clear();
+				if (type == 11) type = 6 + rand() % 5;
+				this->bonusType = type;
+				this->gimmeBonus = false;
 			}
-			if (this->bonusTime <= 0)
-			{
-				this->bonus->~Model();
-				this->bonusType = 0;
-				this->gimmeBonus = true;
+		if (tail.size() < board.size() - amountOfFruits - 10) {
+			if (this->bonus) {
+				if (this->bonus->getOrigin() == fruitPotPos) {
+					switch (bonusType) {
+					case 6:
+						this->fastFor = 10.f;
+						break;
+					case 7:
+						this->invertFor = 5.f;
+						break;
+					case 8:
+						this->slowFor = 10.f;
+						break;
+					case 9:
+						if (tail.size() > 1) {
+							int tailToCut = tail.size() / 2;
+							for (int i = 0; i < tailToCut; i++) this->tail.pop_front();
+						}
+						break;
+					case 10:
+						this->goldenApple = 5;
+						break;
+					}
+					this->bonus->~Model();
+					this->bonusType = 0;
+					this->gimmeBonus = true;
+				}
+				if (this->bonusTime <= 0)
+				{
+					this->bonus->~Model();
+					this->bonusType = 0;
+					this->gimmeBonus = true;
+				}
 			}
+
 		}
 	}
 }
@@ -673,7 +743,8 @@ void Game::updateGameOver()
 
 void Game::handleGameEvents()
 {
-	if (!glfwGetWindowAttrib(window, GLFW_FOCUSED)) this->pause = true;
+	if (!glfwGetWindowAttrib(window, GLFW_FOCUSED))
+		this->pause = true;
 	if (glfwGetKey(this->window, GLFW_KEY_P) == GLFW_PRESS)
 	{
 		this->pause = !this->pause;
@@ -681,13 +752,40 @@ void Game::handleGameEvents()
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_R) == GLFW_PRESS)
 	{
-		reset();
+		setGame();
 		std::this_thread::sleep_for(std::chrono::milliseconds(200));
-	}/*
+	}
+	if (glfwGetKey(this->window, GLFW_KEY_Q) == GLFW_PRESS) {
+		this->gameState = MENU;
+		this->gameType = FAST;
+		setGame();
+		this->pause = false;
+		this->gameOver = true;
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	}
+	/*
 	if (glfwGetKey(this->window, GLFW_KEY_Z) == GLFW_PRESS) {
 		this->wireframed = !this->wireframed;
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}*/
+}
+
+void Game::handleMenuEvents()
+{
+	if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) if (this->menuElement) { this->menuElement--; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
+	if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) if (this->menuElement < 5) { this->menuElement++; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
+	if (glfwGetKey(this->window, GLFW_KEY_ENTER) == GLFW_PRESS) switch ((MENU_ELEMENT)menuElement) {
+	case FAST_GAME:
+		this->gameState = GAME;
+		this->gameType = FAST;
+		setGame();
+		break;
+	case CLASSIC_GAME:
+		this->gameState = GAME;
+		this->gameType = CLASSIC;
+		setGame();
+		break;
+	}
 }
 
 void Game::updateMouseInput()
@@ -706,7 +804,6 @@ void Game::updateMouseInput()
 	this->lastMouseX = this->mouseX;
 	this->lastMouseY = this->mouseY;
 }
-
 
 void Game::updateDeltaTime()
 {
