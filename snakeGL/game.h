@@ -4,9 +4,10 @@
 //ENUMS
 enum DIRECTION { UP, DOWN, LEFT, RIGHT };
 enum GAME_STATE { MENU, GAME };
-enum GAME_TYPE { FAST, CLASSIC, CUSTOM };
+enum GAME_TYPE { QUICK, CLASSIC, CUSTOM };
 enum BONUS { BUNNY, MUSHROOM, TURTLE, BOMB, APPLE, QUESTION };
-enum MENU_ELEMENT { FAST_GAME, CLASSIC_GAME, CUSTOM_GAME, SCORE_BOARD, SETTINGS, EXIT };
+enum MENU_ELEMENT { QUICK_GAME, CLASSIC_GAME, CUSTOM_GAME, SCOREBOARD, SETTINGS, EXIT };
+enum CUSTOMIZABLE{FRUITS, HEIGHT, WIDTH, FREQ, TIME, SPEED};
 
 class Game
 {
@@ -21,10 +22,18 @@ class Game
 	const int GL_VERSION_MAJOR;
 	const int GL_VERSION_MINOR;
 
+	void updateNums(int customizable);
+	Mesh* customNumsUI[6][3];
 	std::vector<Mesh*> GUIelements;
+	std::vector<Mesh*> subMenuElements[6];
+	std::vector<Mesh*> pauseElements;
+	void initGUI();
 	GAME_STATE gameState;
 	GAME_TYPE gameType;
 	unsigned menuElement;
+	unsigned subMenuElement;
+	bool subMenu;
+	Object* nums[10];
 
 	bool iWantBunny;
 	bool iWantShrooms;
@@ -50,6 +59,11 @@ class Game
 
 	int boardWidth;
 	int boardHeight;
+
+	int customHeight;
+	int customWidth;
+
+	bool customizing;
 
 	//Meshes
 	std::vector<Mesh*> meshes;
@@ -82,6 +96,7 @@ class Game
 
 	//Collectibles
 	int amountOfFruits;
+	int customFruits;
 	std::vector<Model*> fruits;
 	Model* bonus;
 	unsigned bonusType;
@@ -156,6 +171,8 @@ class Game
 	void updateDeltaTime();
 	void handleGameEvents();
 	void handleMenuEvents();
+	void handleSubMenuEvents();
+	void handlePauseEvents();
 
 public:
 	//Ctor & dtor

@@ -5,24 +5,30 @@ void Game::setGame()
 	//set some tingz
 	switch (this->gameType)
 	{
-	case FAST:
+	case QUICK:
 		this->amountOfFruits = 5;
 		this->boardHeight = 10;
 		this->boardWidth = 15;
+		this->bonusFreq = 5;
+		this->bonusTime = 5;
+		this->gimmeBonus = true;
+		this->iWantApple = this->iWantBombs = this->iWantBunny = this->iWantShrooms = this->iWantTurtles = this->surpriseMe = true;
+		this->speed = 50.f;
+		break;
+	case CLASSIC:
+		this->amountOfFruits = 1;
+		this->boardHeight = 30;
+		this->boardWidth = 50;
 		this->bonusFreq = 25;
 		this->bonusTime = 10;
 		this->gimmeBonus = true;
-		this->iWantApple = this->iWantBombs = this->iWantBunny = this->iWantShrooms = this->iWantTurtles = this->surpriseMe = true;
-		this->speed = 2.f;
-		break;
-	case CLASSIC:
-		this->amountOfFruits = 10;
-		this->boardHeight = 10;
-		this->boardWidth = 10;
 		this->iWantApple = this->iWantBombs = this->iWantBunny = this->iWantShrooms = this->iWantTurtles = this->surpriseMe = false;
-		this->speed = 1.f;
+		this->speed = 500.f;
 		break;
 	case CUSTOM:
+		this->boardHeight = this->customHeight;
+		this->boardWidth = this->customWidth;
+		this->amountOfFruits = this->customFruits;
 		break;
 	}
 	
@@ -33,6 +39,15 @@ void Game::setGame()
 	this->initMatrices(); //Cam position updated in matrices
 	this->models.clear();
 	this->initModels();
+	for (size_t i = 0; i < 6; i++) subMenuElements[i].clear();
+	pauseElements.clear();
+	this->initGUI();
+	this->updateNums(FRUITS);
+	this->updateNums(HEIGHT);
+	this->updateNums(WIDTH);
+	this->updateNums(FREQ);
+	this->updateNums(TIME);
+	this->updateNums(SPEED);
 	this->initUniforms();
 	this->gameOver = false;
 	this->direction = RIGHT;
@@ -41,18 +56,84 @@ void Game::setGame()
 	this->initTail();
 	this->shouldGrow = false;
 	this->tick = 5.f;
-	this->speed = 10.f;
 	this->gimmeBonus = true;
 	this->invertFor = 0.f;
 	this->fastFor = 0.f;
 	this->slowFor = 0.f;
 	this->fruits.clear();
 	this->initFruits();
+	this->updateFruits();
 	if (this->bonus) this->bonus->~Model();
 	this->bonusType = 0;
 	this->goldenApple = 0;
 	this->weNeedANewPlague = 0;
+}
 
+void Game::updateNums(int customizable)
+{
+	float temp = boardHeight > boardWidth ? (float)boardHeight / 10 : (float)boardWidth / 10;
+	
+	int tempada;
+	int x[3];
+	tempada = 0;
+	switch (customizable)
+	{
+	case FRUITS:
+		tempada = customFruits;
+		break;
+	case HEIGHT:
+		tempada = customHeight;
+		break;
+	case WIDTH:
+		tempada = customWidth;
+		break;
+	case FREQ:
+		tempada = bonusFreq;
+		break;
+	case TIME:
+		tempada = (int)bonusTime;
+		break;
+	case SPEED:
+		tempada = (int)speed;
+		break;
+	}
+	x[0] = tempada / 100;
+	x[1] = (tempada - (tempada / 100) * 100) / 10;
+	x[2] = tempada - (tempada / 10) * 10;
+	for(size_t i=0;i<3;i++)	this->customNumsUI[customizable][i] = new Mesh(nums[x[i]], glm::vec3(0.3f+.2f*i, 1.8f - 0.55f*customizable, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3( temp*1.f, temp*0.5f, temp*1.f));
+}
+
+void Game::initGUI()
+{
+	float temp = boardHeight > boardWidth ? (float)boardHeight / 10 : (float)boardWidth / 10;
+	this->GUIelements.push_back(new Mesh(objects[17], glm::vec3(0.f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3 * temp*1.f, 3 * temp*0.5f, 3 * temp*1.f)));
+	this->GUIelements.push_back(new Mesh(objects[18], glm::vec3(0.f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3 * temp*1.f, 3 * temp*0.5f, 3 * temp*1.f)));
+	this->GUIelements.push_back(new Mesh(objects[19], glm::vec3(0.f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3 * temp*1.f, 3 * temp*0.5f, 3 * temp*1.f)));
+	this->GUIelements.push_back(new Mesh(objects[20], glm::vec3(0.f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3 * temp*1.f, 3 * temp*0.5f, 3 * temp*1.f)));
+	this->GUIelements.push_back(new Mesh(objects[21], glm::vec3(0.f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3 * temp*1.f, 3 * temp*0.5f, 3 * temp*1.f)));
+	this->GUIelements.push_back(new Mesh(objects[22], glm::vec3(0.f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3 * temp*1.f, 3 * temp*0.5f, 3 * temp*1.f)));
+
+	this->pauseElements.push_back(new Mesh(objects[23], glm::vec3((float)boardPos.x + (float)this->boardWidth / 2-1.f, (float)boardPos.y + (float)this->boardHeight / 2, -9.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3*temp*1.f, temp*0.5f, 3*temp*1.f)));
+	this->pauseElements.push_back(new Mesh(objects[25], glm::vec3((float)boardPos.x + (float)this->boardWidth / 2-1.f, (float)boardPos.y + (float)this->boardHeight / 2, -9.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3*temp*1.f, temp*0.5f, 3*temp*1.f)));
+
+	this->subMenuElements[QUICK_GAME].push_back(new Mesh(objects[23], glm::vec3(-0.8f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[QUICK_GAME].push_back(new Mesh(objects[24], glm::vec3(-0.2f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+
+	this->subMenuElements[CLASSIC_GAME].push_back(new Mesh(objects[23], glm::vec3(-0.8f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[CLASSIC_GAME].push_back(new Mesh(objects[24], glm::vec3(-0.2f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+
+	this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[23], glm::vec3(-0.8f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[24], glm::vec3(-0.2f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	for (size_t i = 0; i < 6;i++) this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[27+i], glm::vec3(1.f, 1.8f-0.55f*i, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	//for (size_t i = 0; i <= 9;i++) this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(nums[i], glm::vec3(-0.2f*i, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+
+	this->subMenuElements[SCOREBOARD].push_back(new Mesh(objects[24], glm::vec3(-1.8f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+
+	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[26], glm::vec3(-0.2f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[24], glm::vec3(-0.2f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+
+	this->subMenuElements[EXIT].push_back(new Mesh(objects[22], glm::vec3(-12.5f, -0.75f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(2*temp*1.f, 2*temp*0.5f, 2*temp*1.f)));
+	this->subMenuElements[EXIT].push_back(new Mesh(objects[24], glm::vec3(-0.2f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 }
 
 //Private functions
@@ -185,9 +266,33 @@ void Game::initObjects()
 	this->objects.push_back(new Object("Objects/gameover.obj"));
 	this->objects.push_back(new Object("Objects/restart.obj"));
 	this->objects.push_back(new Object("Objects/pause.obj"));
-	this->objects.push_back(new Object("Objects/fastGame.obj"));
+	this->objects.push_back(new Object("Objects/quickGame.obj"));
 	this->objects.push_back(new Object("Objects/classicGame.obj"));
 	this->objects.push_back(new Object("Objects/customGame.obj"));
+	this->objects.push_back(new Object("Objects/scoreboard.obj")); //objects[20]
+	this->objects.push_back(new Object("Objects/settings.obj"));
+	this->objects.push_back(new Object("Objects/exit.obj")); //objects[22]
+	this->objects.push_back(new Object("Objects/play.obj")); //objects[23]
+	this->objects.push_back(new Object("Objects/return.obj")); //objects[24]
+	this->objects.push_back(new Object("Objects/menu.obj")); //objects[25]
+	this->objects.push_back(new Object("Objects/confirm.obj")); //objects[26]
+	this->objects.push_back(new Object("Objects/fruitsUI.obj")); //objects[27]
+	this->objects.push_back(new Object("Objects/heightUI.obj")); //objects[28]
+	this->objects.push_back(new Object("Objects/widthUI.obj")); //objects[29]
+	this->objects.push_back(new Object("Objects/bonusFreqUI.obj")); //objects[30]
+	this->objects.push_back(new Object("Objects/bonusTimeUI.obj")); //objects[31]
+	this->objects.push_back(new Object("Objects/speedUI.obj")); //objects[32]
+
+	this->nums[0] = new Object("Objects/zero.obj");
+	this->nums[1] = new Object("Objects/one.obj");
+	this->nums[2] = new Object("Objects/two.obj");
+	this->nums[3] = new Object("Objects/three.obj");
+	this->nums[4] = new Object("Objects/four.obj");
+	this->nums[5] = new Object("Objects/five.obj");
+	this->nums[6] = new Object("Objects/six.obj");
+	this->nums[7] = new Object("Objects/seven.obj");
+	this->nums[8] = new Object("Objects/eight.obj");
+	this->nums[9] = new Object("Objects/nine.obj");
 }
 
 void Game::initModels()
@@ -219,16 +324,7 @@ void Game::initModels()
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 	
-	this->GUIelements.push_back(new Mesh(objects[17], glm::vec3(0.f, 0.f, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3*temp*1.f, 3 * temp*0.5f, 3 * temp*1.f)));
-	this->GUIelements.push_back(new Mesh(objects[18], glm::vec3(0.f, 0.f, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3 * temp*1.f, 3 * temp*0.5f, 3 * temp*1.f)));
-	this->GUIelements.push_back(new Mesh(objects[19], glm::vec3(0.f, 0.f, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(3 * temp*1.f, 3 * temp*0.5f, 3 * temp*1.f)));
-	/*
-	this->GUIelements.push_back(new Mesh(objects[20], glm::vec3((float)boardPos.x + this->boardWidth / 2, (float)boardPos.y + this->boardHeight / 2, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
-	this->GUIelements.push_back(new Mesh(objects[21], glm::vec3((float)boardPos.x + this->boardWidth / 2, (float)boardPos.y + this->boardHeight / 2, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
-	this->GUIelements.push_back(new Mesh(objects[22], glm::vec3((float)boardPos.x + this->boardWidth / 2, (float)boardPos.y + this->boardHeight / 2, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
-	*/
 	}
-
 
 void Game::initBoard()
 {
@@ -254,13 +350,13 @@ void Game::initFruits()
 {
 	std::srand((unsigned int)time(NULL));
 	for (int i = 0; i < this->amountOfFruits; i++) {
-		this->meshes.push_back(new Mesh(objects[5], glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -10.f)));
+		glm::vec3 potFrPos = glm::vec3(boardPos.x + std::rand() % boardWidth, boardPos.y + std::rand() % boardHeight, -10.f);
+		this->meshes.push_back(new Mesh(objects[5], potFrPos));
 		this->fruits.push_back(new Model(meshes.empty() ? glm::vec3(0.f) : meshes[0]->getPosition(), this->materials[0], this->textures[RED], this->textures[RED], this->meshes));
 		for (auto*&i : this->meshes) delete i;
 		this->meshes.clear();
 	}
 }
-
 
 void Game::initLights()
 {
@@ -292,13 +388,20 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 {
 	//Init vars
 	this->gameState = MENU;
-	this->gameType = FAST;
-	this->menuElement = FAST_GAME;
+	this->gameType = QUICK;
+	this->menuElement = QUICK_GAME;
+	this->subMenu = false;
+
+	this->customizing = false;
 
 	this->boardWidth = 3;
 	this->boardHeight = 4;
 
+	this->customHeight = 6;
+	this->customWidth = 5;
+
 	this->amountOfFruits = 3;
+	this->customFruits = this->amountOfFruits;
 	this->bonusFreq = 25;
 	this->bonusTime = 0.f;
 
@@ -345,9 +448,17 @@ Game::Game(const char* title, const int width, const int height, const int glMaj
 	this->initObjects();
 	this->initBoard();
 	this->initModels();
+	this->initGUI();
+	this->updateNums(FRUITS);
+	this->updateNums(HEIGHT);
+	this->updateNums(WIDTH);
+	this->updateNums(FREQ);
+	this->updateNums(TIME);
+	this->updateNums(SPEED);
 	this->initHead();
 	this->initTail();
 	this->initFruits();
+	this->updateFruits();
 
 	this->initLights();
 	this->initUniforms();
@@ -367,6 +478,7 @@ Game::~Game()
 	for (auto*&i : this->board) delete i;
 	for (auto*&i : this->tail) delete i;
 	for (auto*&i : this->fruits) delete i;
+	for (auto*&i : this->GUIelements) delete i;
 	for (size_t i = 0; i < this->lights.size(); i++) delete this->lights[i];
 }
 
@@ -388,12 +500,13 @@ void Game::update()
 	//UPDATE DELTA TIME
 	this->updateDeltaTime();
 
-	//INTERACTING WITH WINDOW
-	updateInput(this->window);
-
 	//UPDATE MOUSE INPUT
-	updateMouseInput();
-	if (gameState) {
+	//updateMouseInput();
+
+	//PollEv
+	glfwPollEvents();
+	
+	if (gameState) {//--------------------------------------------------------------------GAME----------------------------------------------------------------------------
 		handleGameEvents();
 		if (!pause) {
 			if (this->fastFor > 0) { this->fastFor -= deltaTime; this->tick = 2.5f; }
@@ -423,10 +536,17 @@ void Game::update()
 			else this->weNeedANewPlague += this->deltaTime;
 			if (this->deltaTime) this->models[0]->rotate(glm::vec3(0.f, 25.f, 0.f)*this->deltaTime);
 		}
+		else {//----------------------------------------------------------------------------PAUSE-------------------------------------------------------------------------
+			handlePauseEvents();
+		}
 	}
 	else
 	{
-		handleMenuEvents();
+		if (!subMenu)//-----------------------------------------------------------------------------------MENU-------------------------------------------------------------------------- 
+		{ handleMenuEvents(); }
+		else {//----------------------------------------------------------------SUBMENU--------------------------------------------------------------------------------------
+			handleSubMenuEvents();
+		}
 	}
 }
 
@@ -443,7 +563,7 @@ void Game::render()
 	//Use a program
 	this->shaders[SHADER_CORE_PROGRAM]->use();
 	//Activate textures and draw stuff
-	if (gameState) {
+	if (gameState) {//--------------------------------------------------------------------GAME----------------------------------------------------------------------------
 		drawBoard();
 		drawSnake();
 		drawFruits();
@@ -456,15 +576,42 @@ void Game::render()
 			this->models[2]->render(this->shaders[SHADER_CORE_PROGRAM]);
 			this->models[3]->render(this->shaders[SHADER_CORE_PROGRAM]);
 		}
-		if (this->pause) this->models[4]->render(this->shaders[SHADER_CORE_PROGRAM]);
+		if (this->pause) { //------------------------------------------------------------PAUSE----------------------------------------------------------------------------------
+			this->models[4]->render(this->shaders[SHADER_CORE_PROGRAM]);
+			for (size_t i = 0; i < 2; i++) {
+				this->textures[i == subMenuElement ? RED : WHITE]->bind(DIFFUSE_TEX);
+				pauseElements[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
+			}
+		}
 	}
 	else 
 	{
-		this->models[5]->render(this->shaders[SHADER_CORE_PROGRAM]);
+		if(!(this->menuElement==CUSTOM_GAME && this->subMenu))this->models[5]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
-		for (size_t i = 0; i < 3; i++) {
-			this->textures[i == menuElement ? RED : WHITE]->bind(DIFFUSE_TEX);
-			GUIelements[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
+		if (!subMenu) {//-----------------------------------------------------------------------------------MENU--------------------------------------------------------------------------
+			for (size_t i = 0; i < 6; i++) {
+				this->textures[i == menuElement ? RED : WHITE]->bind(DIFFUSE_TEX);
+				GUIelements[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
+			}
+		}
+		else {//----------------------------------------------------------------SUBMENU--------------------------------------------------------------------------------------
+			for (size_t i = 0; i < subMenuElements[menuElement].size(); i++) {
+				this->textures[i == subMenuElement ? RED : WHITE]->bind(DIFFUSE_TEX);
+				subMenuElements[menuElement][i]->render(this->shaders[SHADER_CORE_PROGRAM]);
+			}
+			if (menuElement == CUSTOM_GAME) {/*
+				for (size_t i = 2; i < 8; i++) {
+					for (size_t j = 0; j < 3; j++) {
+						this->textures[i == subMenuElement ? customizing ? BLUE : RED : WHITE]->bind(DIFFUSE_TEX);
+						customNumsUI[i - 2][j]->render(this->shaders[SHADER_CORE_PROGRAM]);
+					}
+				}*/
+				for (size_t i = 0; i < 6; i++)
+					for (size_t j = 0; j < 3; j++) {
+						this->textures[WHITE]->bind(DIFFUSE_TEX);
+						customNumsUI[i][j]->render(this->shaders[SHADER_CORE_PROGRAM]);
+					}
+			}
 		}
 	}
 	//End Draw
@@ -508,7 +655,6 @@ void Game::drawFruits()
 	for (size_t i = 0; i < this->fruits.size(); i++)
 		this->fruits[i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 }
-
 
 void Game::moveSnake()
 {
@@ -679,13 +825,13 @@ void Game::updateBonus()
 				if (this->bonus->getOrigin() == fruitPotPos) {
 					switch (bonusType) {
 					case 6:
-						this->fastFor = 10.f;
+						this->fastFor = 5.f;
 						break;
 					case 7:
-						this->invertFor = 5.f;
+						this->invertFor = 2.5f;
 						break;
 					case 8:
-						this->slowFor = 10.f;
+						this->slowFor = 5.f;
 						break;
 					case 9:
 						if (tail.size() > 1) {
@@ -745,9 +891,10 @@ void Game::handleGameEvents()
 {
 	if (!glfwGetWindowAttrib(window, GLFW_FOCUSED))
 		this->pause = true;
-	if (glfwGetKey(this->window, GLFW_KEY_P) == GLFW_PRESS)
+	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		this->pause = !this->pause;
+		subMenuElement = 0;
 		std::this_thread::sleep_for(std::chrono::milliseconds(200));
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_R) == GLFW_PRESS)
@@ -755,13 +902,8 @@ void Game::handleGameEvents()
 		setGame();
 		std::this_thread::sleep_for(std::chrono::milliseconds(200));
 	}
-	if (glfwGetKey(this->window, GLFW_KEY_Q) == GLFW_PRESS) {
-		this->gameState = MENU;
-		this->gameType = FAST;
-		setGame();
-		this->pause = false;
-		this->gameOver = true;
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		
 	}
 	/*
 	if (glfwGetKey(this->window, GLFW_KEY_Z) == GLFW_PRESS) {
@@ -774,18 +916,87 @@ void Game::handleMenuEvents()
 {
 	if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) if (this->menuElement) { this->menuElement--; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
 	if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) if (this->menuElement < 5) { this->menuElement++; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
-	if (glfwGetKey(this->window, GLFW_KEY_ENTER) == GLFW_PRESS) switch ((MENU_ELEMENT)menuElement) {
-	case FAST_GAME:
-		this->gameState = GAME;
-		this->gameType = FAST;
-		setGame();
-		break;
-	case CLASSIC_GAME:
-		this->gameState = GAME;
-		this->gameType = CLASSIC;
-		setGame();
-		break;
+	if (glfwGetKey(this->window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+		this->subMenu = true;
+		subMenuElement = 1;
+		std::this_thread::sleep_for(std::chrono::milliseconds(150));
 	}
+}
+
+void Game::handleSubMenuEvents()
+{
+	if (
+		menuElement == QUICK_GAME ||
+		menuElement == CLASSIC_GAME ||
+		menuElement == EXIT
+		) {
+		if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) if (this->subMenuElement) { this->subMenuElement--; }
+		if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) if (!this->subMenuElement) { this->subMenuElement++; }
+		if (glfwGetKey(this->window, GLFW_KEY_ENTER) == GLFW_PRESS)
+			if (!subMenuElement)
+				switch ((MENU_ELEMENT)menuElement) {
+				case QUICK_GAME:
+					this->gameState = GAME;
+					this->gameType = QUICK;
+					setGame();
+					break;
+				case CLASSIC_GAME:
+					this->gameState = GAME;
+					this->gameType = CLASSIC;
+					setGame();
+					break;
+				case EXIT:
+					glfwPollEvents();
+					glfwSetWindowShouldClose(window, GL_TRUE);
+					break;
+				}
+			else { subMenu = false; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
+	}
+	else if (menuElement == SCOREBOARD) {
+		subMenuElement = 0;
+		if (glfwGetKey(this->window, GLFW_KEY_ENTER) == GLFW_PRESS) { subMenu = false; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
+	}
+	else if (menuElement == CUSTOM_GAME) {
+		if (glfwGetKey(this->window, GLFW_KEY_ENTER) == GLFW_PRESS)
+			switch (subMenuElement) {
+			case 0:
+				this->gameState = GAME;
+				this->gameType = CUSTOM;
+				setGame();
+				break;
+			case 1:
+				subMenu = false;
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				break;
+			}
+		//if (glfwGetKey(this->window, GLFW_KEY_UP) == GLFW_PRESS) if(this->subMenuElement < 2){ this->subMenuElement += 2; } else if(this->subMenuElement<)
+		//if (glfwGetKey(this->window, GLFW_KEY_DOWN) == GLFW_PRESS) if (!this->subMenuElement) { this->subMenuElement++; }
+		if (glfwGetKey(this->window, GLFW_KEY_W) == GLFW_PRESS) { this->customHeight++; std::this_thread::sleep_for(std::chrono::milliseconds(150));
+		updateNums(HEIGHT);
+		}
+		if (glfwGetKey(this->window, GLFW_KEY_UP) == GLFW_PRESS) { this->customFruits++; std::this_thread::sleep_for(std::chrono::milliseconds(150));
+		updateNums(FRUITS);
+		}
+		if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) if (this->subMenuElement) { this->subMenuElement--; }
+		if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) if (!this->subMenuElement) { this->subMenuElement++; }
+	}
+}
+
+void Game::handlePauseEvents()
+{
+	if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) if (this->subMenuElement) { this->subMenuElement--; }
+	if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) if (!this->subMenuElement) { this->subMenuElement++; }
+	if (glfwGetKey(this->window, GLFW_KEY_ENTER) == GLFW_PRESS)
+		if (subMenuElement) {
+			this->gameState = MENU;
+			this->gameType = QUICK;
+			setGame();
+			this->subMenu = false;
+			this->pause = false;
+			this->gameOver = true;
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		}
+		else { pause = false; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
 }
 
 void Game::updateMouseInput()
