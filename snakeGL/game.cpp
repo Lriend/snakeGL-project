@@ -123,22 +123,34 @@ void Game::initGUI(){
 
 	this->subMenuElements[QUICK_GAME].push_back(new Mesh(objects[23], glm::vec3(-0.8f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 	this->subMenuElements[QUICK_GAME].push_back(new Mesh(objects[24], glm::vec3(-0.2f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[QUICK_GAME].push_back(new Mesh(objects[36], glm::vec3(0.f, -0.5f, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 
 	this->subMenuElements[CLASSIC_GAME].push_back(new Mesh(objects[23], glm::vec3(-0.8f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 	this->subMenuElements[CLASSIC_GAME].push_back(new Mesh(objects[24], glm::vec3(-0.2f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[CLASSIC_GAME].push_back(new Mesh(objects[37], glm::vec3(0.f, -0.5f, -3.5f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 
 	this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[23], glm::vec3(-0.8f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 	this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[24], glm::vec3(-0.2f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 	for (size_t i = 0; i < 6;i++) this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[32-i], glm::vec3(1.f, -0.95f+0.55f*i, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	
+	this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[surpriseMe?34:33], glm::vec3(-2.f, -0.8f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f)));
+	this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[iWantApple?34:33], glm::vec3(-2.f, -0.8f+0.55f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f)));
+	this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[iWantBombs?34:33], glm::vec3(-2.f, -0.8f+0.55f*2, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f)));
+	this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[iWantTurtles?34:33], glm::vec3(-2.f, -0.8f+0.55f*3, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f)));
+	this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[iWantShrooms?34:33], glm::vec3(-2.f, -0.8f+0.55f*4, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f)));
+	this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[iWantBunny?34:33], glm::vec3(-2.f, -0.8f+0.55f*5, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f)));
+	
+	for (size_t i = 0; i < 6;i++) this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(objects[6+i], glm::vec3(-2.5f, -0.8f+0.55f*i, -4.2f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f)));
 	//for (size_t i = 0; i <= 9;i++) this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(nums[i], glm::vec3(-0.2f*i, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 
-	this->subMenuElements[SCOREBOARD].push_back(new Mesh(objects[24], glm::vec3(-1.8f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[SCOREBOARD].push_back(new Mesh(objects[24], glm::vec3(-2.1f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 
-	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[26], glm::vec3(-0.2f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
-	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[24], glm::vec3(-0.2f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[26], glm::vec3(0.1f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[24], glm::vec3(0.1f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 
-	this->subMenuElements[EXIT].push_back(new Mesh(objects[22], glm::vec3(-12.5f, -0.75f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(2*temp*1.f, 2*temp*0.5f, 2*temp*1.f)));
-	this->subMenuElements[EXIT].push_back(new Mesh(objects[24], glm::vec3(-0.2f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[EXIT].push_back(new Mesh(objects[22], glm::vec3(-12.7f, -0.75f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(2*temp*1.f, 2*temp*0.5f, 2*temp*1.f)));
+	this->subMenuElements[EXIT].push_back(new Mesh(objects[24], glm::vec3(-0.4f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[EXIT].push_back(new Mesh(objects[35], glm::vec3(0.f, -0.5f, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 }
 
 //Private functions
@@ -260,12 +272,12 @@ void Game::initObjects()
 	this->objects.push_back(new Object("Objects/endFR.obj"));
 	this->objects.push_back(new Object("Objects/headBG.obj"));
 	this->objects.push_back(new Object("Objects/cherry.obj"));
-	this->objects.push_back(new Object("Objects/bunny.obj"));
+	this->objects.push_back(new Object("Objects/bunny.obj")); //objects[6]
 	this->objects.push_back(new Object("Objects/shroom.obj"));
 	this->objects.push_back(new Object("Objects/turtle2.obj"));
 	this->objects.push_back(new Object("Objects/bomb.obj"));
 	this->objects.push_back(new Object("Objects/apple.obj"));
-	this->objects.push_back(new Object("Objects/question.obj"));
+	this->objects.push_back(new Object("Objects/question.obj")); //objects[11]
 	this->objects.push_back(new Object("Objects/nMonkey.obj"));
 	this->objects.push_back(new Object("Objects/snakeGL.obj"));
 	this->objects.push_back(new Object("Objects/gameover.obj"));
@@ -287,6 +299,11 @@ void Game::initObjects()
 	this->objects.push_back(new Object("Objects/bonusFreqUI.obj")); //objects[30]
 	this->objects.push_back(new Object("Objects/bonusTimeUI.obj")); //objects[31]
 	this->objects.push_back(new Object("Objects/speedUI.obj")); //objects[32]
+	this->objects.push_back(new Object("Objects/false.obj")); //objects[33]
+	this->objects.push_back(new Object("Objects/true.obj")); //objects[34]
+	this->objects.push_back(new Object("Objects/exitScreen.obj")); //objects[35]
+	this->objects.push_back(new Object("Objects/quickScreen.obj")); //objects[36]
+	this->objects.push_back(new Object("Objects/classicScreen.obj")); //objects[37]
 
 	this->nums[0] = new Object("Objects/zero.obj");
 	this->nums[1] = new Object("Objects/one.obj");
@@ -608,7 +625,7 @@ void Game::render()
 		else {//----------------------------------------------------------------SUBMENU--------------------------------------------------------------------------------------
 			for (size_t i = 0; i < subMenuElements[menuElement].size(); i++) {
 				this->textures[i == subMenuElement ?customizing?BLUE: RED : WHITE]->bind(DIFFUSE_TEX);
-				subMenuElements[menuElement][i]->render(this->shaders[SHADER_CORE_PROGRAM]);
+				if(subMenuElements[menuElement][i])subMenuElements[menuElement][i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 			}
 			if (menuElement == CUSTOM_GAME) {/*
 				for (size_t i = 2; i < 8; i++) {
@@ -944,6 +961,7 @@ void Game::handleSubMenuEvents()
 	if (
 		menuElement == QUICK_GAME ||
 		menuElement == CLASSIC_GAME ||
+		menuElement == SETTINGS || ///////////////////////////////////////////-------------------DO ODDZIELNEGO OBSLUZENIA
 		menuElement == EXIT
 		) {
 		if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) if (this->subMenuElement) { this->subMenuElement--; }
@@ -965,6 +983,8 @@ void Game::handleSubMenuEvents()
 					glfwPollEvents();
 					glfwSetWindowShouldClose(window, GL_TRUE);
 					break;
+				default:
+					break;
 				}
 			else { subMenu = false; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
 	}
@@ -973,6 +993,7 @@ void Game::handleSubMenuEvents()
 		if (glfwGetKey(this->window, GLFW_KEY_ENTER) == GLFW_PRESS) { subMenu = false; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
 	}
 	else if (menuElement == CUSTOM_GAME) {
+		float temp = boardHeight > boardWidth ? (float)boardHeight / 10 : (float)boardWidth / 10;
 		if (glfwGetKey(this->window, GLFW_KEY_ENTER) == GLFW_PRESS)
 			switch (subMenuElement) {
 			case 0:
@@ -984,6 +1005,42 @@ void Game::handleSubMenuEvents()
 				subMenu = false;
 				std::this_thread::sleep_for(std::chrono::milliseconds(150));
 				break;
+			case BUNNY+8:
+				iWantBunny = !iWantBunny;
+				delete this->subMenuElements[CUSTOM_GAME][subMenuElement];
+				this->subMenuElements[CUSTOM_GAME][subMenuElement] = (new Mesh(objects[iWantBunny ? 34 : 33], glm::vec3(-2.f, -0.8f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f)));
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				break;
+			case MUSHROOM+8:
+				iWantShrooms = !iWantShrooms;
+				delete this->subMenuElements[CUSTOM_GAME][subMenuElement];
+				this->subMenuElements[CUSTOM_GAME][subMenuElement] = new Mesh(objects[iWantShrooms ? 34 : 33], glm::vec3(-2.f, -0.8f + 0.55f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f));
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				break;
+			case TURTLE+8:
+				iWantTurtles = !iWantTurtles;
+				delete this->subMenuElements[CUSTOM_GAME][subMenuElement];
+				this->subMenuElements[CUSTOM_GAME][subMenuElement] = (new Mesh(objects[iWantTurtles ? 34 : 33], glm::vec3(-2.f, -0.8f + 0.55f * 2, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f)));
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				break;
+			case BOMB+8:
+				iWantBombs = !iWantBombs;
+				delete this->subMenuElements[CUSTOM_GAME][subMenuElement];
+				this->subMenuElements[CUSTOM_GAME][subMenuElement] =(new Mesh(objects[iWantBombs ? 34 : 33], glm::vec3(-2.f, -0.8f + 0.55f * 3, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f)));
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				break;
+			case APPLE+8:
+				iWantApple = !iWantApple;
+				delete this->subMenuElements[CUSTOM_GAME][subMenuElement];
+				this->subMenuElements[CUSTOM_GAME][subMenuElement] = (new Mesh(objects[iWantApple ? 34 : 33], glm::vec3(-2.f, -0.8f + 0.55f*4, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f)));
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				break;
+			case QUESTION+8:
+				surpriseMe = !surpriseMe;
+				delete this->subMenuElements[CUSTOM_GAME][subMenuElement];
+				this->subMenuElements[CUSTOM_GAME][subMenuElement] = (new Mesh(objects[surpriseMe ? 34 : 33], glm::vec3(-2.f, -0.8f+0.55f*5, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(0.3f*temp*1.f, 0.3f*temp, 0.3f*temp*1.f)));
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				break;
 			default:
 				customizing = !customizing;
 				std::this_thread::sleep_for(std::chrono::milliseconds(150));
@@ -993,70 +1050,81 @@ void Game::handleSubMenuEvents()
 			if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(this->window, GLFW_KEY_UP) == GLFW_PRESS) {
 				switch (subMenuElement)
 				{
-				case SPEED+2:
-					if(speed<=990)
-					speed += 5.f;
+				case SPEED + 2:
+					if (speed <= 990)
+						speed += 5.f;
 					break;
-				case TIME+2:
-					if(bonusTime<=998)
-					bonusTime += 1.f;
+				case TIME + 2:
+					if (bonusTime <= 998)
+						bonusTime += 1.f;
 					break;
-				case FREQ+2:
-					if(bonusFreq<=998)
-					bonusFreq++;
+				case FREQ + 2:
+					if (bonusFreq <= 998)
+						bonusFreq++;
 					break;
-				case WIDTH+2:
-					if(customWidth<=98)
-					customWidth++;
+				case WIDTH + 2:
+					if (customWidth <= 98)
+						customWidth++;
 					break;
-				case HEIGHT+2:
-					if(customHeight<=98)
-					customHeight++;
+				case HEIGHT + 2:
+					if (customHeight <= 98)
+						customHeight++;
 					break;
-				case FRUITS+2:
-					if(customFruits<customHeight*customWidth-1)
-					customFruits++;
+				case FRUITS + 2:
+					if (customFruits < customHeight*customWidth - 1)
+						customFruits++;
 					break;
 				} std::this_thread::sleep_for(std::chrono::milliseconds(150));
-				updateNums(subMenuElement-2);
+				updateNums(subMenuElement - 2);
 			}
 			if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(this->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
 				switch (subMenuElement)
 				{
-				case SPEED+2:
-					if(speed>5)
-					speed -= 5;
+				case SPEED + 2:
+					if (speed > 5)
+						speed -= 5;
 					break;
-				case TIME+2:
-					if(bonusTime>=1)
-					bonusTime -= 1;
+				case TIME + 2:
+					if (bonusTime >= 1)
+						bonusTime -= 1;
 					break;
-				case FREQ+2:
-					if(bonusFreq>1)
-					bonusFreq--;
+				case FREQ + 2:
+					if (bonusFreq > 1)
+						bonusFreq--;
 					break;
-				case WIDTH+2:
-					if(customWidth>10)
-					customWidth--;
+				case WIDTH + 2:
+					if (customWidth > 10)
+						customWidth--;
 					break;
-				case HEIGHT+2:
-					if(customHeight>10)
-					customHeight--;
+				case HEIGHT + 2:
+					if (customHeight > 10)
+						customHeight--;
 					break;
-				case FRUITS+2:
-					if(customFruits>1)
-					customFruits--;
+				case FRUITS + 2:
+					if (customFruits > 1)
+						customFruits--;
 					break;
 				} std::this_thread::sleep_for(std::chrono::milliseconds(150));
-				updateNums(subMenuElement-2);
+				updateNums(subMenuElement - 2);
 			}
 		}
 		else {
 			if (customHeight*customWidth <= customFruits + 1) { customFruits = customHeight * customWidth - 1; updateNums(FRUITS); }
-			if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) if (this->subMenuElement == 1) { this->subMenuElement--; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
-			if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) if (!this->subMenuElement) { this->subMenuElement++; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
-			if (glfwGetKey(this->window, GLFW_KEY_UP) == GLFW_PRESS) if (this->subMenuElement && this->subMenuElement < 7) { this->subMenuElement++; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
-			if (glfwGetKey(this->window, GLFW_KEY_DOWN) == GLFW_PRESS) if (this->subMenuElement > 1) { this->subMenuElement--; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
+			if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) { if (this->subMenuElement > 1 && this->subMenuElement < 8) this->subMenuElement += 6; else if (this->subMenuElement == 1) this->subMenuElement = 0;
+			std::this_thread::sleep_for(std::chrono::milliseconds(150));
+			}
+			if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) { if (this->subMenuElement < 14 && this->subMenuElement>7) this->subMenuElement -= 6; else if (!this->subMenuElement) this->subMenuElement = 1;
+			std::this_thread::sleep_for(std::chrono::milliseconds(150));
+			}
+			if (glfwGetKey(this->window, GLFW_KEY_UP) == GLFW_PRESS) {
+				if (this->subMenuElement < 13 && this->subMenuElement>7) this->subMenuElement++; else if (!this->subMenuElement) this->subMenuElement = 8;
+				else if (this->subMenuElement < 7 && this->subMenuElement>0) this->subMenuElement++;
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+			}
+			if (glfwGetKey(this->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+				if (this->subMenuElement > 8) this->subMenuElement--; else if (this->subMenuElement < 8 && this->subMenuElement>1) this->subMenuElement--; else if (this->subMenuElement == 8) this->subMenuElement = 0;
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+			}
 		}
 	}
 }
