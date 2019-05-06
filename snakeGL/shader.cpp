@@ -17,8 +17,8 @@ std::string Shader::loadShaderSource(char* fileName) {
 
 	in_file.close();
 
-	std::string versionNr = std::to_string(versionMajor) + std::to_string(versionMinor) + "0";
-	src.replace(src.find("#version"), 12, "#version "+versionNr);
+	//std::string versionNr = std::to_string(versionMajor) + std::to_string(versionMinor) + "0";
+	//src.replace(src.find("#version"), 12, "#version "+versionNr);
 
 	return src;
 }
