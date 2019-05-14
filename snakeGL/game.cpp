@@ -29,7 +29,7 @@ void Game::setGame()
 		this->bonusTime = 10;
 		this->gimmeBonus = true;
 		this->iWantApple = this->iWantBombs = this->iWantBunny = this->iWantShrooms = this->iWantTurtles = this->surpriseMe = false;
-		this->speed = 500.f;
+		this->speed = 200.f;
 		break;
 	case CUSTOM:
 		this->boardHeight = this->customHeight;
@@ -176,6 +176,7 @@ void Game::initWindow(const char* title, bool resizable) {
 	if (this->window == nullptr) {
 		std::cout << "ERROR! GAME.CPP/INITWINDOW : WINDOW_INIT_FAILED" << std::endl;
 		glfwTerminate();
+		abort();
 	}
 
 	glfwGetFramebufferSize(this->window, &this->frameBufferWidth, &this->frameBufferHeight);			//<----------------+----	//For non-resizable window
@@ -1093,11 +1094,11 @@ void Game::handleSubMenuEvents()
 						bonusFreq--;
 					break;
 				case WIDTH + 2:
-					if (customWidth > 10)
+					if (customWidth > 5)
 						customWidth--;
 					break;
 				case HEIGHT + 2:
-					if (customHeight > 10)
+					if (customHeight > 5)
 						customHeight--;
 					break;
 				case FRUITS + 2:
