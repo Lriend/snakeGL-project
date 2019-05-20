@@ -526,7 +526,6 @@ void Game::setWindowShouldClose()
 //Functions
 void Game::update()
 {
-	//UPDATE DELTA TIME
 	this->updateDeltaTime();
 
 	//UPDATE MOUSE INPUT
@@ -534,7 +533,7 @@ void Game::update()
 
 	//PollEv
 	glfwPollEvents();
-	
+
 	if (gameState) {//--------------------------------------------------------------------GAME----------------------------------------------------------------------------
 		handleGameEvents();
 		if (!pause) {
@@ -572,7 +571,9 @@ void Game::update()
 	else
 	{
 		if (!subMenu)//-----------------------------------------------------------------------------------MENU-------------------------------------------------------------------------- 
-		{ handleMenuEvents(); }
+		{
+			handleMenuEvents();
+		}
 		else {//----------------------------------------------------------------SUBMENU--------------------------------------------------------------------------------------
 			handleSubMenuEvents();
 		}
@@ -582,7 +583,7 @@ void Game::update()
 void Game::render()
 {
 	//Clear
-	glClearColor(0.2f,0.2f,0.2f, 1.f); // (R,G,B,Opacity) BACKGROUND
+	glClearColor(0.2f, 0.2f, 0.2f, 1.f); // (R,G,B,Opacity) BACKGROUND
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	//Update uniforms
@@ -613,9 +614,9 @@ void Game::render()
 			}
 		}
 	}
-	else 
+	else
 	{
-		if(!(this->menuElement==CUSTOM_GAME && this->subMenu))this->models[5]->render(this->shaders[SHADER_CORE_PROGRAM]);
+		if (!(this->menuElement == CUSTOM_GAME && this->subMenu))this->models[5]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 		if (!subMenu) {//-----------------------------------------------------------------------------------MENU--------------------------------------------------------------------------
 			for (size_t i = 0; i < 6; i++) {
@@ -625,8 +626,8 @@ void Game::render()
 		}
 		else {//----------------------------------------------------------------SUBMENU--------------------------------------------------------------------------------------
 			for (size_t i = 0; i < subMenuElements[menuElement].size(); i++) {
-				this->textures[i == subMenuElement ?customizing?BLUE: RED : WHITE]->bind(DIFFUSE_TEX);
-				if(subMenuElements[menuElement][i])subMenuElements[menuElement][i]->render(this->shaders[SHADER_CORE_PROGRAM]);
+				this->textures[i == subMenuElement ? customizing ? BLUE : RED : WHITE]->bind(DIFFUSE_TEX);
+				if (subMenuElements[menuElement][i])subMenuElements[menuElement][i]->render(this->shaders[SHADER_CORE_PROGRAM]);
 			}
 			if (menuElement == CUSTOM_GAME) {/*
 				for (size_t i = 2; i < 8; i++) {
@@ -638,8 +639,8 @@ void Game::render()
 				for (size_t i = 0; i < 6; i++)
 					for (size_t j = 0; j < 3; j++) {
 						this->textures[WHITE]->bind(DIFFUSE_TEX);
-						if(customNumsUI[i][j])
-						customNumsUI[i][j]->render(this->shaders[SHADER_CORE_PROGRAM]);
+						if (customNumsUI[i][j])
+							customNumsUI[i][j]->render(this->shaders[SHADER_CORE_PROGRAM]);
 					}
 			}
 		}
