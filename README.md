@@ -4,7 +4,11 @@ Kiedys to bedzie 3d snake replica.
 Poza plikami w repo dolaczyc do projektu nalezy takze foldery z glfw i glew.
 Peace.
 
-Wersja openGLa -> 4.5
+Wymagania:
+OpenGL 4.4 lub wyżej
+VC++ redistributable (jeśli nie zainstalowane wyszkoczy błąd o braku runtime dll)
+
+Link do pobrania paczki z vc_redist - https://www.microsoft.com/en-us/download/details.aspx?id=48145
 
 Kompilator -> MSVC
 
