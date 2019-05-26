@@ -18,6 +18,9 @@ class Game
 	int frameBufferWidth;
 	int frameBufferHeight;
 
+	//scoreSys
+	unsigned score, highClassic, highQuick;
+
 	//OpenGL context
 	const int GL_VERSION_MAJOR;
 	const int GL_VERSION_MINOR;
@@ -176,11 +179,13 @@ class Game
 
 public:
 	//Ctor & dtor
-	Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable);
+	Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable, unsigned highClassic, unsigned highQuick);
 	virtual ~Game();
 
 	//Getters
 	int getWindowShouldClose();
+	unsigned getHighClassic();
+	unsigned getHighQuick();
 
 	//Setters
 	void setWindowShouldClose();
@@ -196,4 +201,9 @@ public:
 	static void framebufferResizeCallback(GLFWwindow* window, int fbW, int fbH);
 	static void updateInput(GLFWwindow* window);
 	static void updateInput(GLFWwindow* window, Mesh& mesh);
+
+	//friendly ops
+	friend std::istream& operator >> (std::istream& in, Game& obj);
+	friend std::ostream& operator << (std::ostream& out, const Game& obj);
 };
+

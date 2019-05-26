@@ -411,9 +411,12 @@ void Game::updateUniforms()
 }
 
 //Ctor & dtor
-Game::Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable)
-	: WINDOW_WIDTH(width), WINDOW_HEIGHT(height), GL_VERSION_MAJOR(glMajorVer), GL_VERSION_MINOR(glMinorVer)
+Game::Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable, unsigned highClassic, unsigned highQuick)
+	: WINDOW_WIDTH(width), WINDOW_HEIGHT(height), GL_VERSION_MAJOR(glMajorVer), GL_VERSION_MINOR(glMinorVer), highClassic(highClassic), highQuick(highQuick), score(0)
 {
+	std::cout << "HighScore Classic - " << this->highClassic << std::endl;
+	std::cout << "HighScore Quick - " << this->highQuick << std::endl;
+	std::cout << "Current Score - " << this->score << std::endl;
 	//Init vars
 	this->gameState = MENU;
 	this->gameType = QUICK;
@@ -515,6 +518,16 @@ Game::~Game()
 int Game::getWindowShouldClose()
 {
 	return glfwWindowShouldClose(this->window);
+}
+
+unsigned Game::getHighClassic()
+{
+	return this->highClassic;
+}
+
+unsigned Game::getHighQuick()
+{
+	return this->highQuick;
 }
 
 //Setters
@@ -1144,7 +1157,7 @@ void Game::handlePauseEvents()
 			this->subMenu = false;
 			this->pause = false;
 			this->gameOver = true;
-			std::this_thread::sleep_for(std::chrono::milliseconds(500));
+			std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		}
 		else { pause = false; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
 }
