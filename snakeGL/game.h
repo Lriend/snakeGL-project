@@ -27,6 +27,8 @@ class Game
 
 	void updateNums(int customizable);
 	Mesh* customNumsUI[6][3];
+	void updateHighScoreUI();
+	Mesh* highScoresUI[2][6];
 	std::vector<Mesh*> GUIelements;
 	std::vector<Mesh*> subMenuElements[6];
 	std::vector<Mesh*> pauseElements;
@@ -45,14 +47,14 @@ class Game
 	bool iWantApple;
 	bool surpriseMe;
 
-	//Mouse Input
-	double lastMouseX;
-	double lastMouseY;
-	double mouseX;
-	double mouseY;
-	double mouseOffsetX;
-	double mouseOffsetY;
-	bool mouseInit;
+	////Mouse Input
+	//double lastMouseX;
+	//double lastMouseY;
+	//double mouseX;
+	//double mouseY;
+	//double mouseOffsetX;
+	//double mouseOffsetY;
+	//bool mouseInit;
 
 	//Private functions
 	void initGLFW();
@@ -101,16 +103,24 @@ class Game
 	int amountOfFruits;
 	int customFruits;
 	std::vector<Model*> fruits;
-	Model* bonus;
+	Model* bonusModel;
 	unsigned bonusType;
 	int bonusFreq;
 	bool gimmeBonus;
+	float bonusTime;
+
+	Bonus *Bonus;
+	Bunny Bunny;
+	Turtle Turtle;
+	Shroom Shroom;
+	Apple Apple;
+	Bomb Bomb;
+
 	float invertFor;
 	float fastFor;
 	float slowFor;
 	int goldenApple;
-	float bonusTime;
-	
+		
 	//Manager
 	bool pause;
 	bool wireframed;
@@ -179,13 +189,11 @@ class Game
 
 public:
 	//Ctor & dtor
-	Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable, unsigned highClassic, unsigned highQuick);
+	Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable);
 	virtual ~Game();
 
 	//Getters
 	int getWindowShouldClose();
-	unsigned getHighClassic();
-	unsigned getHighQuick();
 
 	//Setters
 	void setWindowShouldClose();
@@ -195,7 +203,7 @@ public:
 	void render();
 	//MENU
 	//Update input
-	void updateMouseInput();
+	//void updateMouseInput();
 
 	//Static functions
 	static void framebufferResizeCallback(GLFWwindow* window, int fbW, int fbH);
