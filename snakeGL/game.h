@@ -25,6 +25,7 @@ class Game
 	const int GL_VERSION_MAJOR;
 	const int GL_VERSION_MINOR;
 
+	//UI
 	void updateNums(int customizable);
 	Mesh* customNumsUI[6][3];
 	void updateHighScoreUI();
@@ -42,6 +43,13 @@ class Game
 	bool subMenu;
 	Object* nums[10];
 
+	//Settings
+	unsigned skin;
+	float R, G, B;
+	Mesh* settings[3][3];
+	void updateSettingsUI(unsigned RGB);
+
+	//CustomGame
 	bool iWantBunny;
 	bool iWantShrooms;
 	bool iWantTurtles;

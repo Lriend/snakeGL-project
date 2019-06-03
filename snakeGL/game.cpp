@@ -121,7 +121,7 @@ void Game::updateHighScoreUI()
 	x[5] = tempada - (tempada / 10) * 10; //jednosci
 	for (size_t i = 0; i < 6; i++) {
 		if (this->highScoresUI[0][i]) delete this->highScoresUI[0][i];
-		this->highScoresUI[0][i] = new Mesh(nums[x[i]], glm::vec3(-2.f + .35f*i, -0.2f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f));
+		this->highScoresUI[0][i] = new Mesh(nums[x[i]], glm::vec3(-2.f + .35f*i, -0.25f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f));
 	}
 	tempada = this->highClassic;
 	x[0] = tempada / 100000; //setki tysiecy
@@ -132,7 +132,7 @@ void Game::updateHighScoreUI()
 	x[5] = tempada - (tempada / 10) * 10; //jednosci
 	for (size_t i = 0; i < 6; i++) {
 		if (this->highScoresUI[1][i]) delete this->highScoresUI[1][i];
-		this->highScoresUI[1][i] = new Mesh(nums[x[i]], glm::vec3(-2.f + .35f*i, -1.3f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f));
+		this->highScoresUI[1][i] = new Mesh(nums[x[i]], glm::vec3(-2.f + .35f*i, -.75f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f));
 	}
 }
 
@@ -199,15 +199,51 @@ void Game::initGUI(){
 	//for (size_t i = 0; i <= 9;i++) this->subMenuElements[CUSTOM_GAME].push_back(new Mesh(nums[i], glm::vec3(-0.2f*i, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 
 	this->subMenuElements[SCOREBOARD].push_back(new Mesh(objects[24], glm::vec3(-2.1f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
-	this->subMenuElements[SCOREBOARD].push_back(new Mesh(objects[18], glm::vec3(4.5f, -.55f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[SCOREBOARD].push_back(new Mesh(objects[18], glm::vec3(4.5f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 	this->subMenuElements[SCOREBOARD].push_back(new Mesh(objects[17], glm::vec3(6.1f, .55f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[SCOREBOARD].push_back(new Mesh(objects[20], glm::vec3(-2.f, 2.5f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*2.f, temp*1.f, temp*2.f)));
 
 	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[26], glm::vec3(0.1f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[24], glm::vec3(0.1f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 
+	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[18], glm::vec3(0.3f + .2f, -0.95f + 0.55f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[18], glm::vec3(0.3f + .2f, -0.95f + 1.1f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[18], glm::vec3(0.3f + .2f, -0.95f + 1.65f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[18], glm::vec3(4.3f + .2f, -0.95f + 1.65f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+
+	this->subMenuElements[SETTINGS].push_back(new Mesh(objects[21], glm::vec3(-7.f, 2.5f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*2.f, temp*1.f, temp*2.f)));
+
 	this->subMenuElements[EXIT].push_back(new Mesh(objects[22], glm::vec3(-12.7f, -0.75f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(2*temp*1.f, 2*temp*0.5f, 2*temp*1.f)));
 	this->subMenuElements[EXIT].push_back(new Mesh(objects[24], glm::vec3(-0.4f, 0.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
 	this->subMenuElements[EXIT].push_back(new Mesh(objects[35], glm::vec3(0.f, -0.5f, -4.f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f)));
+}
+
+void Game::updateSettingsUI(unsigned RGB)
+{
+	float temp = boardHeight > boardWidth ? (float)boardHeight / 10 : (float)boardWidth / 10;
+
+	int tempada;
+	int x[3];
+	tempada = 0;
+	switch (RGB)
+	{
+	case 0:
+		tempada = (int)(100*R);
+		break;
+	case 1:
+		tempada = (int)(100*G);
+		break;
+	case 2:
+		tempada = (int)(100*B);
+		break;
+	}
+	x[0] = tempada / 100;
+	x[1] = (tempada - (tempada / 100) * 100) / 10;
+	x[2] = tempada - (tempada / 10) * 10;
+	for (size_t i = 0; i < 3; i++) {
+		if (this->settings[RGB][i]) delete this->settings[RGB][i];
+		this->settings[RGB][i] = new Mesh(nums[x[i]], glm::vec3(-1.8f + .2f*i, -1.1f + 0.55f*RGB, -4.2f), glm::vec3(90.f, 0.f, 0.f), glm::vec3(temp*1.f, temp*0.5f, temp*1.f));
+	}
 }
 
 //Private functions
@@ -405,6 +441,16 @@ void Game::initModels()
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 	
+	this->meshes.push_back(new Mesh(objects[3], glm::vec3(1.5f, 0.f, -10.f), glm::vec3(0.f, 0.f, 180.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+	this->meshes.push_back(new Mesh(objects[0], glm::vec3(0.f, 0.f, -10.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+	this->meshes.push_back(new Mesh(objects[1], glm::vec3(-1.5f, 0.f, -10.f), glm::vec3(0.f, 0.f, 270.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+	this->meshes.push_back(new Mesh(objects[2], glm::vec3(-1.5f, -1.5f, -10.f), glm::vec3(0.f, 0.f, 180.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+	this->meshes.push_back(new Mesh(objects[0], glm::vec3(-3.f, -1.5f, -10.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+	this->meshes.push_back(new Mesh(objects[4], glm::vec3(-4.5f, -1.5f, -10.f), glm::vec3(270.f, 0.f, 180.f), glm::vec3(temp*1.f, temp*.5f, temp)));
+	this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[skin], this->textures[WHITE], this->meshes));
+	for (auto*&i : this->meshes) delete i;
+	this->meshes.clear();
+	models[6]->move(glm::vec3(6.f, -1.5f, 0.f));
 	}
 
 void Game::initBoard()
@@ -425,7 +471,7 @@ void Game::initTail()
 {
 	if (!tail.empty()) for (auto i : tail) delete i;
 	this->meshes.push_back(new Mesh(objects[3], glm::vec3(this->head->getPosition().x - 1.f, this->head->getPosition().y, -10.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 0.5f)));
-	this->tail.push_back(new Model(glm::vec3(this->head->getPosition().x - 1.f, this->head->getPosition().y, -10.f), this->materials[0], this->textures[WHITE], this->textures[WHITE], this->meshes));
+	this->tail.push_back(new Model(glm::vec3(this->head->getPosition().x - 1.f, this->head->getPosition().y, -10.f), this->materials[0], this->textures[skin], this->textures[WHITE], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 }
@@ -471,6 +517,9 @@ void Game::updateUniforms()
 Game::Game(const char* title, const int width, const int height, const int glMajorVer, const int glMinorVer, bool resizable)
 	: WINDOW_WIDTH(width), WINDOW_HEIGHT(height), GL_VERSION_MAJOR(glMajorVer), GL_VERSION_MINOR(glMinorVer), highClassic(0), highQuick(0), score(0)
 {
+	this->skin = 7;
+
+	R = B = G = .2f;
 	//Init vars
 	this->gameState = MENU;
 	this->gameType = QUICK;
@@ -642,7 +691,7 @@ void Game::render()
 {
 	//Clear
 	//glClearColor(0.8f, 0.2f, 0.5f, 1.f); // (R,G,B,Opacity) BACKGROUND
-	glClearColor(0.2f, 0.2f, 0.2f, 1.f); // (R,G,B,Opacity) BACKGROUND
+	glClearColor(R, G, B, 1.f); // (R,G,B,Opacity) BACKGROUND
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	//Update uniforms
@@ -679,7 +728,7 @@ void Game::render()
 	}
 	else
 	{
-		if (!(this->menuElement == CUSTOM_GAME && this->subMenu))this->models[5]->render(this->shaders[SHADER_CORE_PROGRAM]);
+		if (!(subMenu && (menuElement==CUSTOM_GAME || menuElement == SETTINGS || menuElement == SCOREBOARD)))this->models[5]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 		if (!subMenu) {//-----------------------------------------------------------------------------------MENU--------------------------------------------------------------------------
 			for (size_t i = 0; i < 6; i++) {
@@ -708,8 +757,16 @@ void Game::render()
 			else if (menuElement == SCOREBOARD) {
 				for (size_t i = 0; i < 2; i++)
 					for (size_t j = 0; j < 6; j++) {
-						this->textures[WHITE]->bind(DIFFUSE_TEX);
+						this->textures[GOLDEN]->bind(DIFFUSE_TEX);
 						if (highScoresUI[i][j])	highScoresUI[i][j]->render(this->shaders[SHADER_CORE_PROGRAM]);
+					}
+			}
+			else if (menuElement == SETTINGS) {
+				this->models[6]->render(this->shaders[SHADER_CORE_PROGRAM]); 
+				for (size_t i = 0; i < 3; i++)
+					for (size_t j = 0; j < 3; j++) {
+						this->textures[WHITE]->bind(DIFFUSE_TEX);
+						if (settings[i][j])	settings[i][j]->render(this->shaders[SHADER_CORE_PROGRAM]);
 					}
 			}
 		}
@@ -739,7 +796,7 @@ void Game::drawBoard()
 void Game::drawSnake()
 {
 	//STAR CUBE same ting
-	this->textures[WHITE]->bind(DIFFUSE_TEX);
+	this->textures[skin]->bind(DIFFUSE_TEX);
 	this->textures[WHITE]->bind(SPECULAR_TEX); //Do podmiany tekstura specular
 	this->head->render(this->shaders[SHADER_CORE_PROGRAM]);
 
@@ -781,7 +838,7 @@ void Game::moveTail()
 	delete this->tail[0];
 	this->tail.pop_front();
 	this->meshes.push_back(new Mesh(objects[3], backPosTemp, glm::vec3(0.f, 0.f, textureRotation), glm::vec3(1.f, 1.f, 0.5f)));
-	this->tail.push_front(new Model(backPosTemp, this->materials[0], this->textures[WHITE], this->textures[WHITE], this->meshes));
+	this->tail.push_front(new Model(backPosTemp, this->materials[0], this->textures[skin], this->textures[WHITE], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 }
@@ -837,7 +894,7 @@ void Game::growTail()
 	}
 	//this->meshes.push_back(new Mesh(&Cube(), glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -9.75f), glm::vec3(0.f, 0.f, textureRotation), glm::vec3(1.f, 1.f, 0.5f)));
 	//this->meshes.push_back(new Mesh(&Object("Objects/straight.obj"), glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -9.75f), glm::vec3(0.f, 0.f, textureRotation), glm::vec3(1.f, 1.f, 0.5f)));
-	this->tail.push_back(new Model(glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -10.f), this->materials[0], this->textures[WHITE], this->textures[WHITE], this->meshes));
+	this->tail.push_back(new Model(glm::vec3(this->head->getPosition().x, this->head->getPosition().y, -10.f), this->materials[0], this->textures[skin], this->textures[WHITE], this->meshes));
 	for (auto*&i : this->meshes) delete i;
 	this->meshes.clear();
 	this->shouldGrow = false;
@@ -1018,6 +1075,7 @@ void Game::handleGameEvents()
 
 void Game::handleMenuEvents()
 {
+	float temp = boardHeight > boardWidth ? (float)boardHeight / 10 : (float)boardWidth / 10;
 	if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) if (this->menuElement) { this->menuElement--; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
 	if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) if (this->menuElement < 5) { this->menuElement++; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
 	if (glfwGetKey(this->window, GLFW_KEY_ENTER) == GLFW_PRESS) {
@@ -1025,6 +1083,22 @@ void Game::handleMenuEvents()
 		subMenuElement = 1;
 		std::this_thread::sleep_for(std::chrono::milliseconds(150));
 		this->updateHighScoreUI();
+		this->updateSettingsUI(0);
+		this->updateSettingsUI(1);
+		this->updateSettingsUI(2);
+		delete models[6];
+		models.pop_back();
+
+		this->meshes.push_back(new Mesh(objects[3], glm::vec3(1.5f, 0.f, -10.f), glm::vec3(0.f, 0.f, 180.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+		this->meshes.push_back(new Mesh(objects[0], glm::vec3(0.f, 0.f, -10.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+		this->meshes.push_back(new Mesh(objects[1], glm::vec3(-1.5f, 0.f, -10.f), glm::vec3(0.f, 0.f, 270.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+		this->meshes.push_back(new Mesh(objects[2], glm::vec3(-1.5f, -1.5f, -10.f), glm::vec3(0.f, 0.f, 180.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+		this->meshes.push_back(new Mesh(objects[0], glm::vec3(-3.f, -1.5f, -10.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+		this->meshes.push_back(new Mesh(objects[4], glm::vec3(-4.5f, -1.5f, -10.f), glm::vec3(270.f, 0.f, 180.f), glm::vec3(temp*1.f, temp*.5f, temp)));
+		this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[skin], this->textures[WHITE], this->meshes));
+		for (auto*&i : this->meshes) delete i;
+		this->meshes.clear();
+		models[6]->move(glm::vec3(6.f, -1.5f, 0.f));
 	}
 }
 
@@ -1033,7 +1107,6 @@ void Game::handleSubMenuEvents()
 	if (
 		menuElement == QUICK_GAME ||
 		menuElement == CLASSIC_GAME ||
-		menuElement == SETTINGS || ///////////////////////////////////////////-------------------DO ODDZIELNEGO OBSLUZENIA
 		menuElement == EXIT
 		) {
 		if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) if (this->subMenuElement) { this->subMenuElement--; }
@@ -1059,6 +1132,90 @@ void Game::handleSubMenuEvents()
 					break;
 				}
 			else { subMenu = false; std::this_thread::sleep_for(std::chrono::milliseconds(150)); }
+	}
+	else if (menuElement == SETTINGS) {
+		float temp = boardHeight > boardWidth ? (float)boardHeight / 10 : (float)boardWidth / 10;
+		if (glfwGetKey(this->window, GLFW_KEY_ENTER) == GLFW_PRESS)
+			switch (subMenuElement) {
+			case 0:
+				subMenu = false; std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				break;
+			case 1:
+				R = G = B = .2f;
+				skin = 0;
+				subMenu = false; std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				break;
+			case 5:
+				skin==0?skin=7:skin==15?skin=0:skin++;//------------------------------------------------------------------------------------------------
+				delete models[6];
+				models.pop_back();
+
+				this->meshes.push_back(new Mesh(objects[3], glm::vec3(1.5f, 0.f, -10.f), glm::vec3(0.f, 0.f, 180.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+				this->meshes.push_back(new Mesh(objects[0], glm::vec3(0.f, 0.f, -10.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+				this->meshes.push_back(new Mesh(objects[1], glm::vec3(-1.5f, 0.f, -10.f), glm::vec3(0.f, 0.f, 270.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+				this->meshes.push_back(new Mesh(objects[2], glm::vec3(-1.5f, -1.5f, -10.f), glm::vec3(0.f, 0.f, 180.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+				this->meshes.push_back(new Mesh(objects[0], glm::vec3(-3.f, -1.5f, -10.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(temp*1.f, temp, temp*.5f)));
+				this->meshes.push_back(new Mesh(objects[4], glm::vec3(-4.5f, -1.5f, -10.f), glm::vec3(270.f, 0.f, 180.f), glm::vec3(temp*1.f, temp*.5f, temp)));
+				this->models.push_back(new Model(glm::vec3(0.f), this->materials[0], this->textures[skin], this->textures[WHITE], this->meshes));
+				for (auto*&i : this->meshes) delete i;
+				this->meshes.clear();
+				models[6]->move(glm::vec3(6.f, -1.5f, 0.f));
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				break;
+			default:
+				customizing = !customizing;
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				break;
+			}
+		if (customizing) {
+			if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(this->window, GLFW_KEY_UP) == GLFW_PRESS) {
+				switch (subMenuElement) {
+				case 2:
+					R<0.99f?R += .01f:R=1.f;
+					break;
+				case 3:
+					G < 0.99f ? G += .01f : G = 1.f;
+					break;
+				case 4:
+					B < 0.99f ? B += .01f : B = 1.f;
+					break;
+				}std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				updateSettingsUI(subMenuElement - 2);
+			}
+			if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(this->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+				switch (subMenuElement)
+				{
+				case 2:
+					R > 0.01f ? R -= .01f : R = 0.f;
+					break;
+				case 3:
+					G > 0.01f ? G -= .01f : G = 0.f;
+					break;
+				case 4:
+					B > 0.01f ? B -= .01f : B = 0.f;
+					break;
+				} std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				updateSettingsUI(subMenuElement - 2);
+			}
+		}
+		else {
+			if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+				subMenuElement==0||subMenuElement==4?subMenuElement++:subMenuElement==2||subMenuElement==3?subMenuElement=5:subMenuElement=subMenuElement;
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+			}
+			if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+				subMenuElement == 1 || subMenuElement == 5 ? subMenuElement-- : subMenuElement = subMenuElement;
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+			}
+			if (glfwGetKey(this->window, GLFW_KEY_UP) == GLFW_PRESS) {
+				subMenuElement < 4 && subMenuElement>1? subMenuElement++ :subMenuElement==1?subMenuElement=5:subMenuElement==0?subMenuElement=2: subMenuElement = subMenuElement;
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+			}
+			if (glfwGetKey(this->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+				subMenuElement > 2 && subMenuElement<5? subMenuElement-- :subMenuElement==5?subMenuElement=1:subMenuElement==2?subMenuElement=0: subMenuElement = subMenuElement;
+				std::this_thread::sleep_for(std::chrono::milliseconds(150));
+			}
+		}
 	}
 	else if (menuElement == SCOREBOARD) {
 		subMenuElement = 0;
