@@ -136,6 +136,37 @@ void Game::updateHighScoreUI()
 	}
 }
 
+void Game::updateCurrentGameScoreUI()
+{
+	float temp = boardHeight > boardWidth ? (float)boardHeight / 10 : (float)boardWidth / 10;
+
+	int tempada;
+	int x[6];
+	gameType == QUICK ? tempada = this->highQuick : tempada = this->highClassic;
+	x[0] = tempada / 100000; //setki tysiecy
+	x[1] = (tempada - x[0] * 100000) / 10000;
+	x[2] = (tempada - x[0] * 100000 - x[1] * 10000) / 1000;
+	x[3] = (tempada - x[0] * 100000 - x[1] * 10000 - x[2] * 1000) / 100;
+	x[4] = (tempada - x[0] * 100000 - x[1] * 10000 - x[2] * 1000 - x[3] * 100) / 10;
+	x[5] = tempada - (tempada / 10) * 10; //jednosci
+	for (size_t i = 0; i < 6; i++) {
+		if (this->currentGameScoreUI[0][i]) delete this->currentGameScoreUI[0][i];
+		this->currentGameScoreUI[0][i] = new Mesh(nums[x[i]], gameType == QUICK ? glm::vec3(2.6f + .25f*i, 1.f, -4.2f) : glm::vec3(20.f + 1.75f*i, 4.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), gameType==QUICK?glm::vec3(temp*1.f, temp*0.5f, temp*1.f): glm::vec3(temp*2.f, temp*1.f, temp*2.f));
+	}
+	tempada = this->score;
+	x[0] = tempada / 100000; //setki tysiecy
+	x[1] = (tempada - x[0] * 100000) / 10000;
+	x[2] = (tempada - x[0] * 100000 - x[1] * 10000) / 1000;
+	x[3] = (tempada - x[0] * 100000 - x[1] * 10000 - x[2] * 1000) / 100;
+	x[4] = (tempada - x[0] * 100000 - x[1] * 10000 - x[2] * 1000 - x[3] * 100) / 10;
+	x[5] = tempada - (tempada / 10) * 10; //jednosci
+	for (size_t i = 0; i < 6; i++) {
+		if (this->currentGameScoreUI[1][i]) delete this->currentGameScoreUI[1][i];
+		this->currentGameScoreUI[1][i] = new Mesh(nums[x[i]], gameType == QUICK ? glm::vec3(2.6f + .25f*i, .5f, -4.2f) : glm::vec3(20.f + 1.75f*i, 1.f, -4.2f), glm::vec3(90.f, 0.f, 0.f), gameType == QUICK ? glm::vec3(temp*1.f, temp*0.5f, temp*1.f) : glm::vec3(temp*2.f, temp*1.f, temp*2.f));
+	}
+}
+
+
 void Game::initGUI(){
 	float temp = boardHeight > boardWidth ? (float)boardHeight / 10 : (float)boardWidth / 10;
 	if (GUIelements.empty()) {
@@ -585,7 +616,7 @@ void Game::update()
 				if (this->goldenApple) { this->goldenApple--; this->shouldGrow = true; }
 				if (shouldGrow) growTail();
 				else moveTail();
-				moveSnake();
+				moveSnake(); handleGameEvents(); this->updateCurrentGameScoreUI();
 				this->weNeedANewPlague = 0;
 			}
 			else this->weNeedANewPlague += this->deltaTime;
@@ -626,7 +657,11 @@ void Game::render()
 		drawSnake();
 		drawFruits();
 		if (this->bonusModel)this->bonusModel->render(this->shaders[SHADER_CORE_PROGRAM]);
-
+		for (size_t i = 0; i < 2; i++)
+			for (size_t j = 0; j < 6; j++) {
+				this->textures[i==0?GRAY:WHITE]->bind(DIFFUSE_TEX);
+				if (currentGameScoreUI[i][j])	currentGameScoreUI[i][j]->render(this->shaders[SHADER_CORE_PROGRAM]);
+			}
 		//Object from file attempt Monkey
 		this->models[0]->render(this->shaders[SHADER_CORE_PROGRAM]);
 		this->models[1]->render(this->shaders[SHADER_CORE_PROGRAM]);
@@ -957,6 +992,7 @@ void Game::handleGameEvents()
 {
 	if (gameType == QUICK && score > highQuick) highQuick = score;
 	if (gameType == CLASSIC && score > highClassic) highClassic = score;
+	
 	if (!glfwGetWindowAttrib(window, GLFW_FOCUSED))
 		this->pause = true;
 	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -1008,12 +1044,12 @@ void Game::handleSubMenuEvents()
 				case QUICK_GAME:
 					this->gameState = GAME;
 					this->gameType = QUICK;
-					setGame();
+					setGame(); this->updateCurrentGameScoreUI();
 					break;
 				case CLASSIC_GAME:
 					this->gameState = GAME;
 					this->gameType = CLASSIC;
-					setGame();
+					setGame(); this->updateCurrentGameScoreUI();
 					break;
 				case EXIT:
 					glfwPollEvents();

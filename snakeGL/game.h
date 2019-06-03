@@ -29,6 +29,8 @@ class Game
 	Mesh* customNumsUI[6][3];
 	void updateHighScoreUI();
 	Mesh* highScoresUI[2][6];
+	Mesh* currentGameScoreUI[2][6];
+	void updateCurrentGameScoreUI();
 	std::vector<Mesh*> GUIelements;
 	std::vector<Mesh*> subMenuElements[6];
 	std::vector<Mesh*> pauseElements;
