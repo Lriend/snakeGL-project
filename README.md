@@ -27,12 +27,7 @@ Current game state of preparation:
 I hate C++, my dudes, but i will finish this one project. I guess...
 ![](https://i.kym-cdn.com/entries/icons/original/000/028/021/work.jpg)
 
-Todo:
-- punktacja
-- menu, a w nim:
-  - scoreboard z najlepszymi wynikami
-  - settingz:
-    - zmiana tekstur
-    - zmiana koloru czyszczenia bufora
-    - glosnosc muzyki
+"Todo":
 - muzyka
+- settingz:
+  - glosnosc muzyki
