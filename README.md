@@ -6,7 +6,7 @@ Peace.
 
 Wymagania:
 OpenGL 4.4 lub wyżej
-VC++ redistributable (jeśli nie zainstalowane wyszkoczy błąd o braku runtime dll)
+VC++ redistributable (jeśli nie zainstalowane wyskoczy błąd o braku runtime dll)
 
 Link do pobrania paczki z vc_redist - https://www.microsoft.com/en-us/download/details.aspx?id=48145
 
